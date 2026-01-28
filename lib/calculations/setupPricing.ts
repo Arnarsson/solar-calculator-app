@@ -2,23 +2,23 @@ import Decimal from 'decimal.js';
 import { DANISH_VAT_RATE } from './types';
 
 export interface SetupCostInput {
-  panelsCost: decimal.Decimal;
-  inverterCost: decimal.Decimal;
-  installationCost: decimal.Decimal;
-  mountingKitCost: decimal.Decimal;
-  batteryCost?: decimal.Decimal; // Optional for Phase 5
+  panelsCost: Decimal;
+  inverterCost: Decimal;
+  installationCost: Decimal;
+  mountingKitCost: Decimal;
+  batteryCost?: Decimal; // Optional for Phase 5
 }
 
 export interface SetupCostResult {
-  panelsCost: decimal.Decimal;
-  inverterCost: decimal.Decimal;
-  installationCost: decimal.Decimal;
-  mountingKitCost: decimal.Decimal;
-  batteryCost: decimal.Decimal;
-  subtotal: decimal.Decimal;
-  vatRate: decimal.Decimal;
-  vatAmount: decimal.Decimal;
-  totalWithVat: decimal.Decimal;
+  panelsCost: Decimal;
+  inverterCost: Decimal;
+  installationCost: Decimal;
+  mountingKitCost: Decimal;
+  batteryCost: Decimal;
+  subtotal: Decimal;
+  vatRate: Decimal;
+  vatAmount: Decimal;
+  totalWithVat: Decimal;
 }
 
 /**
