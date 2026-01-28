@@ -24,8 +24,8 @@ export function CompassPicker({ value, onChange, className }: CompassPickerProps
   const [hoveredDirection, setHoveredDirection] = useState<string | null>(null);
 
   // Find closest direction to current value
-  const getClosestDirection = (degrees: number) => {
-    let closest = DIRECTIONS[0];
+  const getClosestDirection = (degrees: number): typeof DIRECTIONS[number] => {
+    let closest: typeof DIRECTIONS[number] = DIRECTIONS[0];
     let minDiff = 360;
 
     for (const dir of DIRECTIONS) {

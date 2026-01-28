@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronDown, MapPin, Zap, Sun, Home, Loader2, RefreshCw } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, MapPin, Zap, Sun, Home, Loader2, RefreshCw, Map } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { InfoTooltip, ExplainerCard } from '@/components/ui/info-tooltip';
 import { CompassPicker } from '../CompassPicker';
+import { RoofMapSelector } from '../map';
 import { cn } from '@/lib/utils';
 import type { WizardData } from '../WizardLayout';
 
@@ -54,9 +55,24 @@ const PRICE_AREAS = [
 
 export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showMap, setShowMap] = useState(false);
   const [isFetchingPrice, setIsFetchingPrice] = useState(false);
   const [priceError, setPriceError] = useState<string | null>(null);
   const [priceSource, setPriceSource] = useState<string | null>(null);
+
+  // Location state for map
+  const [mapLocation, setMapLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  const handleMapLocationChange = (lat: number, lng: number) => {
+    setMapLocation({ lat, lng });
+    // Could be used in the future for location-based features
+  };
+
+  const handleMapAreaChange = (areaM2: number) => {
+    if (areaM2 > 0) {
+      onChange({ roofAreaM2: areaM2 });
+    }
+  };
 
   // Fetch current electricity price from Energi Data Service
   const fetchCurrentPrice = async () => {
@@ -368,6 +384,50 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
               />
               <span className="text-sm text-muted-foreground">m²</span>
             </div>
+
+            {/* Map toggle button */}
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setShowMap(!showMap)}
+              className="flex items-center gap-2 w-full justify-center"
+            >
+              <Map className="h-4 w-4" />
+              {showMap ? 'Skjul kort' : 'Tegn tagflade på kort'}
+              <motion.div
+                animate={{ rotate: showMap ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </motion.div>
+            </Button>
+
+            {/* Collapsible map section */}
+            <AnimatePresence>
+              {showMap && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div className="space-y-2">
+                    <RoofMapSelector
+                      latitude={mapLocation?.lat}
+                      longitude={mapLocation?.lng}
+                      roofAreaM2={data.roofAreaM2}
+                      onLocationChange={handleMapLocationChange}
+                      onAreaChange={handleMapAreaChange}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Tegn en polygon omkring din tagflade for automatisk beregning af areal.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Quick estimate based on area */}
             <motion.div
