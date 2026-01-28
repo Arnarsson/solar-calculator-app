@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 1 of 7 (Foundation & Core Calculations)
-Plan: 2 of 7 in current phase
+Plan: 3 of 7 in current phase
 Status: In progress
-Last activity: 2026-01-28 — Completed 01-02-PLAN.md (Core Calculation Modules)
+Last activity: 2026-01-28 — Completed 01-03-PLAN.md (25-Year Projection and Tax Scenarios)
 
-Progress: [██░░░░░░░░] 29%
+Progress: [███░░░░░░░] 43%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
+- Total plans completed: 3
 - Average duration: 5 min
-- Total execution time: 0.17 hours
+- Total execution time: 0.23 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1 - Foundation | 2/7 | 10 min | 5 min |
+| 1 - Foundation | 3/7 | 14 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5min), 01-02 (5min)
-- Trend: Consistent velocity
+- Last 5 plans: 01-01 (5min), 01-02 (5min), 01-03 (4min)
+- Trend: Consistent velocity, slight improvement
 
 *Updated after each plan completion*
 
@@ -49,6 +49,9 @@ Recent decisions affecting current work:
 - 01-01: Add directUrl to PostgreSQL datasource — Compatibility with serverless/connection pooling
 - 01-02: Use native decimal.js types instead of @types/decimal.js — Better maintained, modern TypeScript
 - 01-02: Use fc.double with noNaN for property tests — More reliable than fc.float
+- 01-03: Track both nominal and real savings — Real values discount to today's value for honest 25-year comparison
+- 01-03: Separate electricity inflation from general inflation — Electricity historically inflates faster
+- 01-03: Tax values marked as placeholders — Danish rules change annually, needs SKAT 2026 verification
 
 ### Pending Todos
 
@@ -60,7 +63,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28 16:18 UTC
-Stopped at: Completed 01-02-PLAN.md (Core Calculation Modules)
+Last session: 2026-01-28 16:26 UTC
+Stopped at: Completed 01-03-PLAN.md (25-Year Projection and Tax Scenarios)
 Resume file: None
-Next: 01-03-PLAN.md (Calculator UI components)
+Next: 01-04-PLAN.md (next plan in Foundation phase)
