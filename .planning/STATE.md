@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 1 of 7 (Foundation & Core Calculations)
-Plan: 1 of 7 in current phase
+Plan: 2 of 7 in current phase
 Status: In progress
-Last activity: 2026-01-28 — Completed 01-01-PLAN.md (Database Foundation)
+Last activity: 2026-01-28 — Completed 01-02-PLAN.md (Core Calculation Modules)
 
-Progress: [█░░░░░░░░░] 14%
+Progress: [██░░░░░░░░] 29%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
+- Total plans completed: 2
 - Average duration: 5 min
-- Total execution time: 0.08 hours
+- Total execution time: 0.17 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1 - Foundation | 1/7 | 5 min | 5 min |
+| 1 - Foundation | 2/7 | 10 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5min)
-- Trend: Just started
+- Last 5 plans: 01-01 (5min), 01-02 (5min)
+- Trend: Consistent velocity
 
 *Updated after each plan completion*
 
@@ -47,6 +47,8 @@ Recent decisions affecting current work:
 - 01-01: Use Prisma.Decimal with string inputs for financial precision — Avoids float imprecision in 25-year projections
 - 01-01: Track formulaVersion in scenarios — Enables auditability of calculation methodology (DATA-05)
 - 01-01: Add directUrl to PostgreSQL datasource — Compatibility with serverless/connection pooling
+- 01-02: Use native decimal.js types instead of @types/decimal.js — Better maintained, modern TypeScript
+- 01-02: Use fc.double with noNaN for property tests — More reliable than fc.float
 
 ### Pending Todos
 
@@ -58,7 +60,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28 16:03 UTC
-Stopped at: Completed 01-01-PLAN.md (Database Foundation)
+Last session: 2026-01-28 16:18 UTC
+Stopped at: Completed 01-02-PLAN.md (Core Calculation Modules)
 Resume file: None
-Next: 01-02-PLAN.md (Core calculation modules)
+Next: 01-03-PLAN.md (Calculator UI components)
