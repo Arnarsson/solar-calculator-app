@@ -1,10 +1,35 @@
 'use client';
 
 import { useState, ReactNode } from 'react';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { WizardStepper } from './WizardStepper';
 import { MobileStickyBar } from './MobileStickyBar';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { ChevronLeft, ChevronRight, Sun } from 'lucide-react';
+
+// Animation variants for step transitions
+const stepVariants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 50 : -50,
+    opacity: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    x: direction > 0 ? -50 : 50,
+    opacity: 0,
+  }),
+};
+
+const stepTransition = {
+  type: 'spring' as const,
+  stiffness: 300,
+  damping: 30,
+};
 
 export interface WizardStep {
   id: number;
@@ -100,9 +125,13 @@ interface WizardLayoutProps {
 
 export function WizardLayout({ children }: WizardLayoutProps) {
   const [currentStep, setCurrentStep] = useState(1);
+  const [previousStep, setPreviousStep] = useState(1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [wizardData, setWizardData] = useState<WizardData>(DEFAULT_WIZARD_DATA);
   const [canProceed, setCanProceed] = useState(true);
+
+  // Direction for animations: 1 = forward, -1 = backward
+  const direction = currentStep > previousStep ? 1 : -1;
 
   // Calculate total system cost for display
   const totalSystemCost =
@@ -132,6 +161,7 @@ export function WizardLayout({ children }: WizardLayoutProps) {
       if (step > currentStep && !completedSteps.includes(currentStep)) {
         setCompletedSteps([...completedSteps, currentStep]);
       }
+      setPreviousStep(currentStep);
       setCurrentStep(step);
     }
   };
@@ -142,12 +172,14 @@ export function WizardLayout({ children }: WizardLayoutProps) {
       if (!completedSteps.includes(currentStep)) {
         setCompletedSteps([...completedSteps, currentStep]);
       }
+      setPreviousStep(currentStep);
       setCurrentStep(currentStep + 1);
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
+      setPreviousStep(currentStep);
       setCurrentStep(currentStep - 1);
     }
   };
@@ -182,16 +214,31 @@ export function WizardLayout({ children }: WizardLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      {/* Stepper - always visible at top */}
-      <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <WizardStepper
-            steps={WIZARD_STEPS}
-            currentStep={currentStep}
-            completedSteps={completedSteps}
-            onStepClick={handleStepClick}
-          />
+    <div className="min-h-screen bg-gradient-to-b from-background to-muted/30 dark:from-background dark:to-background">
+      {/* Header - always visible at top */}
+      <div className="sticky top-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Top row with logo and theme toggle */}
+          <div className="flex items-center justify-between h-14 border-b border-border/50">
+            <Link href="/" className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
+                <Sun className="h-4 w-4 text-primary-foreground" />
+              </div>
+              <span className="text-base font-semibold text-foreground">
+                SolBeregner
+              </span>
+            </Link>
+            <ThemeToggle />
+          </div>
+          {/* Stepper row */}
+          <div className="py-4">
+            <WizardStepper
+              steps={WIZARD_STEPS}
+              currentStep={currentStep}
+              completedSteps={completedSteps}
+              onStepClick={handleStepClick}
+            />
+          </div>
         </div>
       </div>
 
@@ -237,14 +284,26 @@ export function WizardLayout({ children }: WizardLayoutProps) {
         </div>
 
         {/* Mobile: Single column with bottom padding for sticky bar */}
-        <div className="lg:hidden pb-24">
-          {currentStep < 3 ? (
-            // Steps 1 and 2: Show form only
-            <div>{form}</div>
-          ) : (
-            // Step 3: Show results
-            <div>{results}</div>
-          )}
+        <div className="lg:hidden pb-24 overflow-hidden">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={currentStep}
+              custom={direction}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={stepTransition}
+            >
+              {currentStep < 3 ? (
+                // Steps 1 and 2: Show form only
+                <div>{form}</div>
+              ) : (
+                // Step 3: Show results
+                <div>{results}</div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 

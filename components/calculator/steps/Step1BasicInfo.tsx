@@ -1,14 +1,41 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp, MapPin, Zap, Sun, Home } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ChevronDown, MapPin, Zap, Sun, Home } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
+import { InfoTooltip, ExplainerCard } from '@/components/ui/info-tooltip';
 import { cn } from '@/lib/utils';
 import type { WizardData } from '../WizardLayout';
+
+// Stagger animation for form fields
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.1,
+    },
+  },
+} as const;
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: 'spring' as const,
+      stiffness: 300,
+      damping: 24,
+    },
+  },
+} as const;
 
 interface Step1BasicInfoProps {
   data: WizardData;
@@ -80,217 +107,390 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-6">
-        {/* Price Area Selector */}
-        <div className="space-y-3">
-          <Label className="flex items-center gap-2 text-sm font-medium">
-            <MapPin className="h-4 w-4 text-slate-500" />
-            Prisområde
-          </Label>
-          <div className="grid grid-cols-2 gap-3">
-            {PRICE_AREAS.map((area) => (
-              <button
-                key={area.value}
-                type="button"
-                onClick={() => handlePriceAreaChange(area.value)}
-                className={cn(
-                  'p-4 rounded-xl border-2 text-left transition-all duration-200',
-                  data.priceArea === area.value
-                    ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                )}
-              >
-                <span className="font-semibold text-slate-900">{area.label}</span>
-                <p className="text-xs text-slate-500 mt-1">{area.description}</p>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Electricity Price */}
-        <div className="space-y-3">
-          <Label className="flex items-center gap-2 text-sm font-medium">
-            <Zap className="h-4 w-4 text-slate-500" />
-            Elpris (kr/kWh)
-          </Label>
-
-          {/* Quick presets */}
-          <div className="flex flex-wrap gap-2">
-            {PRICE_PRESETS.map((price) => (
-              <Button
-                key={price}
-                type="button"
-                variant={data.electricityRateDkk === price ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => handleElectricityRateChange(price)}
-                className="min-w-[60px]"
-              >
-                {price.toFixed(1)}
-              </Button>
-            ))}
-          </div>
-
-          {/* Custom input */}
-          <div className="flex items-center gap-2">
-            <Input
-              type="number"
-              step="0.1"
-              min="0.5"
-              max="10"
-              value={data.electricityRateDkk}
-              onChange={(e) => handleElectricityRateChange(parseFloat(e.target.value) || 0)}
-              className="w-24"
-            />
-            <span className="text-sm text-slate-500">kr/kWh</span>
-          </div>
-
-          <p className="text-xs text-slate-500">
-            Den gennemsnitlige elpris i Danmark er ca. 2,50 kr/kWh inkl. afgifter.
-          </p>
-        </div>
-
-        {/* Self-consumption Slider */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
+      <CardContent>
+        <motion.div
+          className="space-y-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Price Area Selector */}
+          <motion.div className="space-y-3" variants={itemVariants}>
             <Label className="flex items-center gap-2 text-sm font-medium">
-              <Home className="h-4 w-4 text-slate-500" />
-              Egetforbrug
+              <MapPin className="h-4 w-4 text-slate-500" />
+              Prisområde
+              <InfoTooltip
+                title="Hvad er prisområde?"
+                content={
+                  <>
+                    Danmark er opdelt i to elspotområder (DK1 og DK2) med forskellige
+                    elpriser. Vælg det område, hvor din bolig ligger, for at få
+                    mere præcise beregninger af dine besparelser.
+                  </>
+                }
+              />
             </Label>
-            <span className="text-lg font-bold text-primary">
-              {Math.round(data.selfConsumptionRate * 100)}%
-            </span>
-          </div>
-
-          <Slider
-            value={[data.selfConsumptionRate * 100]}
-            onValueChange={handleSelfConsumptionChange}
-            min={10}
-            max={100}
-            step={5}
-            className="w-full"
-          />
-
-          <div className="flex justify-between text-xs text-slate-500">
-            <span>10%</span>
-            <span>100%</span>
-          </div>
-
-          <p className="text-xs text-slate-500">
-            Hvor meget af den producerede strøm du bruger selv. Typisk 50-80% for et gennemsnitligt parcelhus.
-          </p>
-        </div>
-
-        {/* Roof Area */}
-        <div className="space-y-3">
-          <Label htmlFor="roofArea" className="flex items-center gap-2 text-sm font-medium">
-            <Sun className="h-4 w-4 text-slate-500" />
-            Tagflade til solceller
-          </Label>
-
-          <div className="flex items-center gap-2">
-            <Input
-              id="roofArea"
-              type="number"
-              min="10"
-              max="500"
-              value={data.roofAreaM2}
-              onChange={(e) => handleRoofAreaChange(e.target.value)}
-              className="w-24"
-            />
-            <span className="text-sm text-slate-500">m²</span>
-          </div>
-
-          {/* Quick estimate based on area */}
-          <div className="p-3 bg-slate-50 rounded-lg">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">Estimeret systemstørrelse:</span>
-              <span className="font-semibold text-slate-900">
-                {(data.roofAreaM2 / 6).toFixed(1)} kWp
-              </span>
+            <div className="grid grid-cols-2 gap-3">
+              {PRICE_AREAS.map((area) => (
+                <motion.button
+                  key={area.value}
+                  type="button"
+                  onClick={() => handlePriceAreaChange(area.value)}
+                  whileTap={{ scale: 0.98 }}
+                  className={cn(
+                    'p-4 rounded-xl border-2 text-left transition-all duration-200',
+                    data.priceArea === area.value
+                      ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                      : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                  )}
+                >
+                  <span className="font-semibold text-slate-900">{area.label}</span>
+                  <p className="text-xs text-slate-500 mt-1">{area.description}</p>
+                </motion.button>
+              ))}
             </div>
-            <div className="flex items-center justify-between text-sm mt-1">
-              <span className="text-slate-600">Antal paneler (ca.):</span>
-              <span className="font-semibold text-slate-900">
-                {Math.round(data.roofAreaM2 / 2)} stk
-              </span>
+          </motion.div>
+
+          {/* Electricity Price */}
+          <motion.div className="space-y-3" variants={itemVariants}>
+            <Label className="flex items-center gap-2 text-sm font-medium">
+              <Zap className="h-4 w-4 text-slate-500" />
+              Elpris (kr/kWh)
+              <InfoTooltip
+                title="Din elpris"
+                content={
+                  <>
+                    Din elpris findes på din elregning og inkluderer spotpris,
+                    elafgifter, tariffer og moms. Det er den totale pris du
+                    betaler pr. kWh. En højere elpris betyder st&oslash;rre besparelser
+                    ved solceller.
+                  </>
+                }
+              />
+            </Label>
+
+            {/* Quick presets */}
+            <div className="flex flex-wrap gap-2">
+              {PRICE_PRESETS.map((price) => (
+                <motion.div key={price} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    type="button"
+                    variant={data.electricityRateDkk === price ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => handleElectricityRateChange(price)}
+                    className="min-w-[60px]"
+                  >
+                    {price.toFixed(1)}
+                  </Button>
+                </motion.div>
+              ))}
             </div>
-          </div>
-        </div>
 
-        {/* Advanced Section (collapsed) */}
-        <div className="border-t pt-4">
-          <button
-            type="button"
-            onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center justify-between w-full text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors"
-          >
-            <span className="flex items-center gap-2">
-              Avanceret (orientering og hældning)
-            </span>
-            {showAdvanced ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
-            )}
-          </button>
+            {/* Custom input */}
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                step="0.1"
+                min="0.5"
+                max="10"
+                value={data.electricityRateDkk}
+                onChange={(e) => handleElectricityRateChange(parseFloat(e.target.value) || 0)}
+                className="w-24"
+              />
+              <span className="text-sm text-slate-500">kr/kWh</span>
+            </div>
 
-          {showAdvanced && (
-            <div className="mt-4 space-y-6 animate-in slide-in-from-top-2 duration-200">
-              {/* Azimuth / Orientation */}
-              <div className="space-y-3">
-                <Label className="text-sm font-medium">Tagets orientering</Label>
-                <div className="grid grid-cols-4 gap-2">
-                  {AZIMUTH_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => handleAzimuthChange(option.value)}
-                      className={cn(
-                        'p-2 rounded-lg border text-center text-sm transition-all duration-200',
-                        data.azimuthDegrees === option.value
-                          ? 'border-primary bg-primary/10 text-primary font-semibold'
-                          : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-                      )}
-                    >
-                      <span className="block text-lg">{option.short}</span>
-                      <span className="block text-xs text-slate-500">{option.value}°</span>
-                    </button>
-                  ))}
-                </div>
-                <p className="text-xs text-slate-500">
-                  Sydvendt (180°) giver den bedste produktion. Optimal er 160-200°.
-                </p>
-              </div>
+            <p className="text-xs text-slate-500">
+              Den gennemsnitlige elpris i Danmark er ca. 2,50 kr/kWh inkl. afgifter.
+            </p>
+          </motion.div>
 
-              {/* Tilt Angle */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Taghældning</Label>
-                  <span className="text-lg font-bold text-primary">{data.tiltDegrees}°</span>
-                </div>
-
-                <Slider
-                  value={[data.tiltDegrees]}
-                  onValueChange={handleTiltChange}
-                  min={0}
-                  max={90}
-                  step={5}
-                  className="w-full"
+          {/* Self-consumption Slider */}
+          <motion.div className="space-y-3" variants={itemVariants}>
+            <div className="flex items-center justify-between">
+              <Label className="flex items-center gap-2 text-sm font-medium">
+                <Home className="h-4 w-4 text-slate-500" />
+                Egetforbrug
+                <InfoTooltip
+                  title="Hvad er egetforbrug?"
+                  content={
+                    <>
+                      <p className="mb-2">
+                        <strong>Egetforbrug</strong> er den andel af din solcelleproduktion,
+                        som du bruger direkte i husstanden.
+                      </p>
+                      <p className="mb-2">
+                        Resten af strommen sælges til elnettet til spotpris (ca. 0,30-0,80 kr/kWh),
+                        hvilket er langt mindre end du selv betaler for el.
+                      </p>
+                      <p>
+                        <strong>Tip:</strong> Højere egetforbrug = større besparelser.
+                        Du kan øge egetforbruget med varmepumpe, elbil eller batteri.
+                      </p>
+                    </>
+                  }
+                  maxWidth="320px"
                 />
+              </Label>
+              <motion.span
+                key={data.selfConsumptionRate}
+                initial={{ scale: 1.2, color: '#22c55e' }}
+                animate={{ scale: 1, color: 'var(--primary)' }}
+                className="text-lg font-bold text-primary"
+              >
+                {Math.round(data.selfConsumptionRate * 100)}%
+              </motion.span>
+            </div>
 
-                <div className="flex justify-between text-xs text-slate-500">
-                  <span>0° (fladt)</span>
-                  <span>35° (optimal)</span>
-                  <span>90° (lodret)</span>
+            <Slider
+              value={[data.selfConsumptionRate * 100]}
+              onValueChange={handleSelfConsumptionChange}
+              min={10}
+              max={100}
+              step={5}
+              className="w-full"
+            />
+
+            <div className="flex justify-between text-xs text-slate-500">
+              <span>10%</span>
+              <span>100%</span>
+            </div>
+
+            {/* Contextual help based on value */}
+            <ExplainerCard
+              title={
+                data.selfConsumptionRate < 0.5
+                  ? 'Lavt egetforbrug'
+                  : data.selfConsumptionRate > 0.8
+                  ? 'Højt egetforbrug'
+                  : 'Typisk egetforbrug'
+              }
+              variant={data.selfConsumptionRate < 0.5 ? 'warning' : 'tip'}
+              className="text-xs"
+            >
+              {data.selfConsumptionRate < 0.5 ? (
+                <>
+                  Med {Math.round(data.selfConsumptionRate * 100)}% egetforbrug sælges
+                  meget strøm til lav spotpris. Overvej varmepumpe eller elbil for
+                  at øge egetforbruget og dine besparelser.
+                </>
+              ) : data.selfConsumptionRate > 0.8 ? (
+                <>
+                  {Math.round(data.selfConsumptionRate * 100)}% egetforbrug er flot!
+                  Du udnytter din solcellestrøm optimalt og maksimerer dine besparelser.
+                </>
+              ) : (
+                <>
+                  {Math.round(data.selfConsumptionRate * 100)}% er typisk for et
+                  parcelhus med normalt forbrug. Du kan øge det med varmepumpe,
+                  elbil eller batteri.
+                </>
+              )}
+            </ExplainerCard>
+          </motion.div>
+
+          {/* Roof Area */}
+          <motion.div className="space-y-3" variants={itemVariants}>
+            <Label htmlFor="roofArea" className="flex items-center gap-2 text-sm font-medium">
+              <Sun className="h-4 w-4 text-slate-500" />
+              Tagflade til solceller
+              <InfoTooltip
+                title="Tagflade til solceller"
+                content={
+                  <>
+                    <p className="mb-2">
+                      Angiv det areal på dit tag, hvor du kan placere solceller.
+                      Husk at fratrække arealet til tagvinduer, skorstene og skyggeområder.
+                    </p>
+                    <p>
+                      <strong>Tommelfingerregel:</strong> Ca. 6 m² pr. kWp systemstørrelse,
+                      og ca. 2 m² pr. panel.
+                    </p>
+                  </>
+                }
+              />
+            </Label>
+
+            <div className="flex items-center gap-2">
+              <Input
+                id="roofArea"
+                type="number"
+                min="10"
+                max="500"
+                value={data.roofAreaM2}
+                onChange={(e) => handleRoofAreaChange(e.target.value)}
+                className="w-24"
+              />
+              <span className="text-sm text-slate-500">m²</span>
+            </div>
+
+            {/* Quick estimate based on area */}
+            <motion.div
+              className="p-3 bg-slate-50 rounded-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-600">Estimeret systemstørrelse:</span>
+                <motion.span
+                  key={data.roofAreaM2}
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  className="font-semibold text-slate-900"
+                >
+                  {(data.roofAreaM2 / 6).toFixed(1)} kWp
+                </motion.span>
+              </div>
+              <div className="flex items-center justify-between text-sm mt-1">
+                <span className="text-slate-600">Antal paneler (ca.):</span>
+                <motion.span
+                  key={`panels-${data.roofAreaM2}`}
+                  initial={{ scale: 1.1 }}
+                  animate={{ scale: 1 }}
+                  className="font-semibold text-slate-900"
+                >
+                  {Math.round(data.roofAreaM2 / 2)} stk
+                </motion.span>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Advanced Section (collapsed) */}
+          <motion.div className="border-t pt-4" variants={itemVariants}>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="flex items-center justify-between w-full text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors"
+            >
+              <span className="flex items-center gap-2">
+                Avanceret (orientering og hældning)
+                <InfoTooltip
+                  title="Avancerede indstillinger"
+                  content={
+                    <>
+                      Tagets orientering og hældning påvirker solcelleproduktionen
+                      betydeligt. Standardværdierne er sat til optimale danske forhold,
+                      men du kan justere dem, hvis du kender dit tags præcise orientering.
+                    </>
+                  }
+                />
+              </span>
+              <motion.div
+                animate={{ rotate: showAdvanced ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ChevronDown className="h-4 w-4" />
+              </motion.div>
+            </button>
+
+            <motion.div
+              initial={false}
+              animate={{
+                height: showAdvanced ? 'auto' : 0,
+                opacity: showAdvanced ? 1 : 0,
+              }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 space-y-6">
+                {/* Azimuth / Orientation */}
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2 text-sm font-medium">
+                    Tagets orientering
+                    <InfoTooltip
+                      title="Tagorientering (azimut)"
+                      content={
+                        <>
+                          <p className="mb-2">
+                            Azimut angiver hvilken retning dit tag vender. 180° = direkte mod syd.
+                          </p>
+                          <p>
+                            <strong>Optimal:</strong> Syd (160-200°) giver højeste produktion.
+                            Øst/vest giver ca. 15-20% mindre produktion.
+                          </p>
+                        </>
+                      }
+                    />
+                  </Label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {AZIMUTH_OPTIONS.map((option) => (
+                      <motion.button
+                        key={option.value}
+                        type="button"
+                        onClick={() => handleAzimuthChange(option.value)}
+                        whileTap={{ scale: 0.95 }}
+                        className={cn(
+                          'p-2 rounded-lg border text-center text-sm transition-all duration-200',
+                          data.azimuthDegrees === option.value
+                            ? 'border-primary bg-primary/10 text-primary font-semibold'
+                            : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                        )}
+                      >
+                        <span className="block text-lg">{option.short}</span>
+                        <span className="block text-xs text-slate-500">{option.value}°</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Sydvendt (180°) giver den bedste produktion. Optimal er 160-200°.
+                  </p>
                 </div>
 
-                <p className="text-xs text-slate-500">
-                  Optimal hældning i Danmark er 30-40°. De fleste danske tage har 25-45° hældning.
-                </p>
+                {/* Tilt Angle */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <Label className="flex items-center gap-2 text-sm font-medium">
+                      Taghældning
+                      <InfoTooltip
+                        title="Taghældning (tilt)"
+                        content={
+                          <>
+                            <p className="mb-2">
+                              Taghældningen måles i grader fra vandret.
+                              Et fladt tag er 0°, et lodret tag er 90°.
+                            </p>
+                            <p>
+                              <strong>Optimal i Danmark:</strong> 30-40° giver den bedste
+                              årsproduktion. Danske tage har typisk 25-45° hældning.
+                            </p>
+                          </>
+                        }
+                      />
+                    </Label>
+                    <motion.span
+                      key={data.tiltDegrees}
+                      initial={{ scale: 1.2, color: '#22c55e' }}
+                      animate={{ scale: 1, color: 'var(--primary)' }}
+                      className="text-lg font-bold text-primary"
+                    >
+                      {data.tiltDegrees}°
+                    </motion.span>
+                  </div>
+
+                  <Slider
+                    value={[data.tiltDegrees]}
+                    onValueChange={handleTiltChange}
+                    min={0}
+                    max={90}
+                    step={5}
+                    className="w-full"
+                  />
+
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span>0° (fladt)</span>
+                    <span>35° (optimal)</span>
+                    <span>90° (lodret)</span>
+                  </div>
+
+                  <p className="text-xs text-slate-500">
+                    Optimal hældning i Danmark er 30-40°. De fleste danske tage har 25-45° hældning.
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </CardContent>
     </Card>
   );
