@@ -32,10 +32,16 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. System shows 25-year financial projection with inflation adjustment and all assumptions documented
   4. All calculations use Decimal type (financial accuracy), and user can see "how we calculated this" for major results
   5. Calculator provides instant feedback with debounced persistence (no UI lag)
-**Plans**: TBD
+**Plans**: 7 plans in 4 waves
 
 Plans:
-- [ ] 01-01: TBD during planning
+- [ ] 01-01-PLAN.md — Database setup with PostgreSQL + Decimal schema
+- [ ] 01-02-PLAN.md — Core calculation modules (TDD): setupPricing, payback
+- [ ] 01-03-PLAN.md — 25-year projection + tax scenarios (TDD)
+- [ ] 01-04-PLAN.md — API routes + serialization + PVGIS integration
+- [ ] 01-05-PLAN.md — Input UI (tabbed calculator interface)
+- [ ] 01-06-PLAN.md — Output UI (summary cards, charts, breakdowns)
+- [ ] 01-07-PLAN.md — Integration + methodology panel + verification
 
 ### Phase 2: Panel Database & Enhanced Analytics
 **Goal**: Users can compare specific solar panel products and see realistic long-term performance
@@ -134,7 +140,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Core Calculations | 0/TBD | Not started | - |
+| 1. Foundation & Core Calculations | 0/7 | Planned | - |
 | 2. Panel Database & Enhanced Analytics | 0/TBD | Not started | - |
 | 3. Authentication & Scenario Management | 0/TBD | Not started | - |
 | 4. Payment & Premium Gating | 0/TBD | Not started | - |
