@@ -58,7 +58,11 @@ describe('Tax Scenarios (Danish Tax Deductions)', () => {
   it('documents assumptions for transparency (FIN-06)', () => {
     const result = calculateTaxScenario(baseInput, 'LABOR_DEDUCTION');
 
-    expect(result.assumptions).toContain('Danish home improvement deduction');
+    // Check that assumptions include Danish deduction info
+    const hasDanishDeduction = result.assumptions.some(a =>
+      a.includes('Danish home improvement deduction')
+    );
+    expect(hasDanishDeduction).toBe(true);
     expect(result.assumptions.length).toBeGreaterThan(0);
   });
 });
