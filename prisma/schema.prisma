@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(cuid())
+  email         String         @unique
+  name          String?
+  password      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  installations Installation[]
+}
+
+model Installation {
+  id               String        @id @default(cuid())
+  userId           String
+  user             User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name             String        @default("My Solar Installation")
+  address          String?
+
+  // Panel specifications
+  panelWattage     Float         @default(400)
+  numberOfPanels   Int           @default(10)
+  sunHoursPerYear  Float         @default(950)
+  efficiencyFactor Float         @default(0.8)
+
+  // Calculated (stored for quick access)
+  systemSizeKw     Float?
+  yearlyProductionKwh Float?
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  setupCost        SetupCost?
+  monthlyData      MonthlyData[]
+}
+
+model SetupCost {
+  id               String       @id @default(cuid())
+  installationId   String       @unique
+  installation     Installation @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  solarPanelsCost  Float        @default(0)
+  inverterCost     Float        @default(0)
+  batteryCost      Float        @default(0)
+  mountingKitCost  Float        @default(0)
+  installationCost Float        @default(0)
+  loanInterestRate Float        @default(0)
+
+  currency         String       @default("DKK")
+
+  // Calculated total
+  totalCost        Float?
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+}
+
+model MonthlyData {
+  id               String       @id @default(cuid())
+  installationId   String
+  installation     Installation @relation(fields: [installationId], references: [id], onDelete: Cascade)
+
+  month            Int          // 1-12
+  year             Int
+
+  // Production (kWh)
+  production              Float @default(0)
+  electricityUsedDirectly Float @default(0)
+  sentToGrid              Float @default(0)
+  sentToBattery           Float @default(0)
+
+  // Consumption (kWh)
+  consumption             Float @default(0)
+  usedByBattery           Float @default(0)
+  totalFromOwnProduction  Float @default(0)
+  usedDirectlyFromGrid    Float @default(0)
+  usedFromGrid            Float @default(0)
+  evCharged               Float @default(0)
+  usageWithoutEv          Float @default(0)
+
+  // Cost
+  electricityPrice        Float @default(0) // kr/kWh
+  amountPaid              Float @default(0)
+  amountSaved             Float @default(0)
+  gridEarnings            Float @default(0)
+
+  // Battery optimization (Better Use of Setup)
+  potentialKwhAvoided     Float @default(0)
+  potentialSavings        Float @default(0)
+  arbitrageKwh            Float @default(0)
+  arbitrageSavings        Float @default(0)
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@unique([installationId, month, year])
+}
