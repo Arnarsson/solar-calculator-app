@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-01-28)
 ## Current Position
 
 Phase: 1 of 7 (Foundation & Core Calculations)
-Plan: 5 of 7 in current phase
+Plan: 4 of 7 in current phase
 Status: In progress
-Last activity: 2026-01-28 — Completed 01-05-PLAN.md (Input UI with Tabbed Interface)
+Last activity: 2026-01-28 — Completed 01-04-PLAN.md (API Routes + PVGIS Integration)
 
-Progress: [████░░░░░░] 57%
+Progress: [███░░░░░░░] 43%
 
 ## Performance Metrics
 
 **Velocity:**
 - Total plans completed: 4
-- Average duration: 4.5 min
+- Average duration: 5 min
 - Total execution time: 0.30 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 1 - Foundation | 4/7 | 18 min | 4.5 min |
+| 1 - Foundation | 4/7 | 19 min | 5 min |
 
 **Recent Trend:**
-- Last 5 plans: 01-01 (5min), 01-02 (5min), 01-03 (4min), 01-05 (4min)
-- Trend: Consistent velocity maintained, efficient execution
+- Last 5 plans: 01-01 (5min), 01-02 (5min), 01-03 (4min), 01-04 (5min)
+- Trend: Consistent velocity, solid execution
 
 *Updated after each plan completion*
 
@@ -52,9 +52,10 @@ Recent decisions affecting current work:
 - 01-03: Track both nominal and real savings — Real values discount to today's value for honest 25-year comparison
 - 01-03: Separate electricity inflation from general inflation — Electricity historically inflates faster
 - 01-03: Tax values marked as placeholders — Danish rules change annually, needs SKAT 2026 verification
-- 01-05: 500ms debounce on input changes — Prevents UI lag per DATA-03 performance requirement
-- 01-05: Auto-detect DK1/DK2 from longitude — Simplifies user input (DK1 if lon < 10.5)
-- 01-05: Visual sliders for roof orientation — Makes technical inputs accessible to homeowners
+- 01-04: Use serializeDecimalFixed for consistent 2-decimal precision — Balances precision with readability in API responses
+- 01-04: PVGIS API cached for 24 hours — Respects rate limits while providing fresh data
+- 01-04: TanStack Query caches calculation results for 5 minutes — Deterministic results enable aggressive caching
+- 01-04: Fallback to area-based production estimate — Graceful degradation when PVGIS unavailable
 
 ### Pending Todos
 
@@ -66,7 +67,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28 16:32 UTC
-Stopped at: Completed 01-05-PLAN.md (Input UI with Tabbed Interface)
+Last session: 2026-01-28 16:33 UTC
+Stopped at: Completed 01-04-PLAN.md (API Routes + PVGIS Integration)
 Resume file: None
-Next: 01-06-PLAN.md (next plan in Foundation phase)
+Next: 01-05-PLAN.md (next plan in Foundation phase)
