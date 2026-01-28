@@ -39,8 +39,8 @@ describe('25-Year Projection (Financial Projection)', () => {
       // Year 2: 8536 * 0.995 = 8493.32 kWh
       expect(result.years[1].productionKwh.toFixed(2)).toBe('8493.32');
 
-      // Year 25: 8536 * 0.995^24 = 7562.67 kWh
-      expect(result.years[24].productionKwh.toFixed(2)).toBe('7562.67');
+      // Year 25: 8536 * 0.995^24 = 7568.47 kWh
+      expect(result.years[24].productionKwh.toFixed(2)).toBe('7568.47');
     });
   });
 
