@@ -159,20 +159,20 @@ export function CostBreakdown({ costs, currency = 'DKK', onEditCosts }: CostBrea
             {data.map((item) => (
               <div
                 key={item.name}
-                className="flex items-center justify-between p-4 rounded-xl border bg-slate-50/50 hover:bg-slate-100/80 transition-colors"
+                className="flex items-center justify-between p-4 rounded-xl border bg-muted/50 hover:bg-muted transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div
                     className="w-4 h-4 rounded-full shadow-sm"
                     style={{ backgroundColor: item.fill }}
                   />
-                  <span className="font-medium text-slate-700">{item.name}</span>
+                  <span className="font-medium text-foreground">{item.name}</span>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-slate-900">
+                  <div className="font-bold text-foreground">
                     {formatCurrency(item.value)} {currency}
                   </div>
-                  <div className="text-xs text-slate-500">
+                  <div className="text-xs text-muted-foreground">
                     {((item.value / total) * 100).toFixed(0)}%
                   </div>
                 </div>
@@ -180,9 +180,9 @@ export function CostBreakdown({ costs, currency = 'DKK', onEditCosts }: CostBrea
             ))}
 
             {/* Total row */}
-            <div className="flex items-center justify-between p-4 rounded-xl border-2 border-slate-200 bg-slate-100/50 mt-4">
-              <span className="font-semibold text-slate-800">Total</span>
-              <span className="text-xl font-bold text-slate-900">
+            <div className="flex items-center justify-between p-4 rounded-xl border-2 border-border bg-muted/50 mt-4">
+              <span className="font-semibold text-foreground">Total</span>
+              <span className="text-xl font-bold text-foreground">
                 {formatCurrency(total)} {currency}
               </span>
             </div>

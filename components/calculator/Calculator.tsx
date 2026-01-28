@@ -23,7 +23,7 @@ export function Calculator() {
   const hasValidInput = Object.keys(validationErrors).length === 0 && isDirty;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gradient-to-b from-muted via-background to-muted">
       {/* Hero Header */}
       <header className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-50"></div>
@@ -84,14 +84,14 @@ export function Calculator() {
               <div className="card-premium p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-lg font-semibold text-slate-900">Dine oplysninger</h2>
-                    <p className="text-sm text-slate-500 mt-0.5">Indtast data for beregning</p>
+                    <h2 className="text-lg font-semibold text-foreground">Dine oplysninger</h2>
+                    <p className="text-sm text-muted-foreground mt-0.5">Indtast data for beregning</p>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={reset}
-                    className="text-slate-400 hover:text-slate-600"
+                    className="text-muted-foreground hover:text-foreground"
                   >
                     <RotateCcw className="h-4 w-4" />
                   </Button>
@@ -111,16 +111,16 @@ export function Calculator() {
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-slate-600">Tagareal</span>
-                      <span className="text-sm font-semibold text-slate-900">{input.roofAreaM2} m²</span>
+                      <span className="text-sm text-muted-foreground">Tagareal</span>
+                      <span className="text-sm font-semibold text-foreground">{input.roofAreaM2} m²</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-slate-600">Elpris</span>
-                      <span className="text-sm font-semibold text-slate-900">{input.electricityRateDkk.toFixed(2)} kr/kWh</span>
+                      <span className="text-sm text-muted-foreground">Elpris</span>
+                      <span className="text-sm font-semibold text-foreground">{input.electricityRateDkk.toFixed(2)} kr/kWh</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-slate-600">Egetforbrug</span>
-                      <span className="text-sm font-semibold text-slate-900">{Math.round(input.selfConsumptionRate * 100)}%</span>
+                      <span className="text-sm text-muted-foreground">Egetforbrug</span>
+                      <span className="text-sm font-semibold text-foreground">{Math.round(input.selfConsumptionRate * 100)}%</span>
                     </div>
                   </div>
                 </div>
@@ -136,7 +136,7 @@ export function Calculator() {
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
                   !showMethodology
                     ? 'bg-slate-900 text-white shadow-lg'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
                 Beregninger
@@ -146,7 +146,7 @@ export function Calculator() {
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
                   showMethodology
                     ? 'bg-slate-900 text-white shadow-lg'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
                 Metode & Antagelser

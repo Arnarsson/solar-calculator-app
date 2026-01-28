@@ -100,7 +100,7 @@ export function MetricsGrid({ projection, systemSizeKw, systemCost, currency = '
         return (
           <div key={index} className="metric-card group">
             <div className="flex flex-row items-center justify-between mb-3">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 {metric.label}
               </h3>
               <div className="p-2 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
@@ -108,8 +108,8 @@ export function MetricsGrid({ projection, systemSizeKw, systemCost, currency = '
               </div>
             </div>
             <div className="space-y-1">
-              <div className="text-2xl font-bold tracking-tight text-slate-900">{metric.value}</div>
-              <p className="text-xs text-slate-500">{metric.subtext}</p>
+              <div className="text-2xl font-bold tracking-tight text-foreground">{metric.value}</div>
+              <p className="text-xs text-muted-foreground">{metric.subtext}</p>
             </div>
           </div>
         );

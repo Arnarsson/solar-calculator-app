@@ -54,9 +54,9 @@ export default function CalculatorPage() {
             if (currentStep < 3) {
               // Preview mode for steps 1-2
               return (
-                <Card className="bg-slate-50 border-dashed">
+                <Card className="bg-muted/50 border-dashed border-border">
                   <CardHeader>
-                    <CardTitle className="text-lg">Foreløbigt estimat</CardTitle>
+                    <CardTitle className="text-lg text-foreground">Foreløbigt estimat</CardTitle>
                     <CardDescription>
                       Opdateres når du udfylder flere felter
                     </CardDescription>

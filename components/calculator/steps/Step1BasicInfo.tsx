@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, MapPin, Zap, Sun, Home } from 'lucide-react';
+import { ChevronDown, MapPin, Zap, Sun, Home, Loader2, RefreshCw } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { InfoTooltip, ExplainerCard } from '@/components/ui/info-tooltip';
+import { SegmentedToggle } from '@/components/ui/segmented-toggle';
+import { CompassPicker } from '../CompassPicker';
 import { cn } from '@/lib/utils';
 import type { WizardData } from '../WizardLayout';
 
@@ -51,20 +53,36 @@ const PRICE_AREAS = [
   { value: 'DK2' as const, label: 'DK2 (Østdanmark)', description: 'Sjælland, Lolland-Falster, Bornholm' },
 ];
 
-// Compass directions for azimuth
-const AZIMUTH_OPTIONS = [
-  { value: 0, label: 'Nord', short: 'N' },
-  { value: 45, label: 'Nordøst', short: 'NØ' },
-  { value: 90, label: 'Øst', short: 'Ø' },
-  { value: 135, label: 'Sydøst', short: 'SØ' },
-  { value: 180, label: 'Syd', short: 'S' },
-  { value: 225, label: 'Sydvest', short: 'SV' },
-  { value: 270, label: 'Vest', short: 'V' },
-  { value: 315, label: 'Nordvest', short: 'NV' },
-];
-
 export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [isFetchingPrice, setIsFetchingPrice] = useState(false);
+  const [priceError, setPriceError] = useState<string | null>(null);
+  const [priceSource, setPriceSource] = useState<string | null>(null);
+
+  // Fetch current electricity price from Min Strøm API
+  const fetchCurrentPrice = async () => {
+    setIsFetchingPrice(true);
+    setPriceError(null);
+
+    try {
+      const response = await fetch(`/api/electricity-prices?region=${data.priceArea}`);
+
+      if (!response.ok) {
+        throw new Error('Kunne ikke hente elpriser');
+      }
+
+      const priceData = await response.json();
+
+      // Update electricity rate with fetched average price
+      onChange({ electricityRateDkk: Math.round(priceData.averagePrice * 100) / 100 });
+      setPriceSource(`Min Strøm (${data.priceArea})`);
+    } catch (error) {
+      console.error('Error fetching price:', error);
+      setPriceError('Kunne ikke hente pris. Prøv igen eller indtast manuelt.');
+    } finally {
+      setIsFetchingPrice(false);
+    }
+  };
 
   const handlePriceAreaChange = (value: 'DK1' | 'DK2') => {
     onChange({ priceArea: value });
@@ -117,7 +135,7 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
           {/* Price Area Selector */}
           <motion.div className="space-y-3" variants={itemVariants}>
             <Label className="flex items-center gap-2 text-sm font-medium">
-              <MapPin className="h-4 w-4 text-slate-500" />
+              <MapPin className="h-4 w-4 text-muted-foreground" />
               Prisområde
               <InfoTooltip
                 title="Hvad er prisområde?"
@@ -130,31 +148,21 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
                 }
               />
             </Label>
-            <div className="grid grid-cols-2 gap-3">
-              {PRICE_AREAS.map((area) => (
-                <motion.button
-                  key={area.value}
-                  type="button"
-                  onClick={() => handlePriceAreaChange(area.value)}
-                  whileTap={{ scale: 0.98 }}
-                  className={cn(
-                    'p-4 rounded-xl border-2 text-left transition-all duration-200',
-                    data.priceArea === area.value
-                      ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
-                      : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                  )}
-                >
-                  <span className="font-semibold text-slate-900">{area.label}</span>
-                  <p className="text-xs text-slate-500 mt-1">{area.description}</p>
-                </motion.button>
-              ))}
-            </div>
+            <SegmentedToggle
+              options={PRICE_AREAS.map((area) => ({
+                value: area.value,
+                label: area.label,
+                description: area.description,
+              }))}
+              value={data.priceArea}
+              onChange={handlePriceAreaChange}
+            />
           </motion.div>
 
           {/* Electricity Price */}
           <motion.div className="space-y-3" variants={itemVariants}>
             <Label className="flex items-center gap-2 text-sm font-medium">
-              <Zap className="h-4 w-4 text-slate-500" />
+              <Zap className="h-4 w-4 text-muted-foreground" />
               Elpris (kr/kWh)
               <InfoTooltip
                 title="Din elpris"
@@ -162,12 +170,40 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
                   <>
                     Din elpris findes på din elregning og inkluderer spotpris,
                     elafgifter, tariffer og moms. Det er den totale pris du
-                    betaler pr. kWh. En højere elpris betyder st&oslash;rre besparelser
+                    betaler pr. kWh. En højere elpris betyder større besparelser
                     ved solceller.
                   </>
                 }
               />
             </Label>
+
+            {/* Auto-fetch button */}
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={fetchCurrentPrice}
+                disabled={isFetchingPrice}
+                className="flex items-center gap-2"
+              >
+                {isFetchingPrice ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+                Hent aktuel pris
+              </Button>
+              {priceSource && (
+                <span className="text-xs text-muted-foreground">
+                  Fra {priceSource}
+                </span>
+              )}
+            </div>
+
+            {priceError && (
+              <p className="text-xs text-destructive">{priceError}</p>
+            )}
 
             {/* Quick presets */}
             <div className="flex flex-wrap gap-2">
@@ -197,10 +233,10 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
                 onChange={(e) => handleElectricityRateChange(parseFloat(e.target.value) || 0)}
                 className="w-24"
               />
-              <span className="text-sm text-slate-500">kr/kWh</span>
+              <span className="text-sm text-muted-foreground">kr/kWh</span>
             </div>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               Den gennemsnitlige elpris i Danmark er ca. 2,50 kr/kWh inkl. afgifter.
             </p>
           </motion.div>
@@ -209,7 +245,7 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
           <motion.div className="space-y-3" variants={itemVariants}>
             <div className="flex items-center justify-between">
               <Label className="flex items-center gap-2 text-sm font-medium">
-                <Home className="h-4 w-4 text-slate-500" />
+                <Home className="h-4 w-4 text-muted-foreground" />
                 Egetforbrug
                 <InfoTooltip
                   title="Hvad er egetforbrug?"
@@ -251,7 +287,7 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
               className="w-full"
             />
 
-            <div className="flex justify-between text-xs text-slate-500">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>10%</span>
               <span>100%</span>
             </div>
@@ -292,7 +328,7 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
           {/* Roof Area */}
           <motion.div className="space-y-3" variants={itemVariants}>
             <Label htmlFor="roofArea" className="flex items-center gap-2 text-sm font-medium">
-              <Sun className="h-4 w-4 text-slate-500" />
+              <Sun className="h-4 w-4 text-muted-foreground" />
               Tagflade til solceller
               <InfoTooltip
                 title="Tagflade til solceller"
@@ -321,34 +357,34 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
                 onChange={(e) => handleRoofAreaChange(e.target.value)}
                 className="w-24"
               />
-              <span className="text-sm text-slate-500">m²</span>
+              <span className="text-sm text-muted-foreground">m²</span>
             </div>
 
             {/* Quick estimate based on area */}
             <motion.div
-              className="p-3 bg-slate-50 rounded-lg"
+              className="p-3 bg-muted rounded-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
               <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-600">Estimeret systemstørrelse:</span>
+                <span className="text-muted-foreground">Estimeret systemstørrelse:</span>
                 <motion.span
                   key={data.roofAreaM2}
                   initial={{ scale: 1.1 }}
                   animate={{ scale: 1 }}
-                  className="font-semibold text-slate-900"
+                  className="font-semibold text-foreground"
                 >
                   {(data.roofAreaM2 / 6).toFixed(1)} kWp
                 </motion.span>
               </div>
               <div className="flex items-center justify-between text-sm mt-1">
-                <span className="text-slate-600">Antal paneler (ca.):</span>
+                <span className="text-muted-foreground">Antal paneler (ca.):</span>
                 <motion.span
                   key={`panels-${data.roofAreaM2}`}
                   initial={{ scale: 1.1 }}
                   animate={{ scale: 1 }}
-                  className="font-semibold text-slate-900"
+                  className="font-semibold text-foreground"
                 >
                   {Math.round(data.roofAreaM2 / 2)} stk
                 </motion.span>
@@ -357,11 +393,11 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
           </motion.div>
 
           {/* Advanced Section (collapsed) */}
-          <motion.div className="border-t pt-4" variants={itemVariants}>
+          <motion.div className="border-t border-border pt-4" variants={itemVariants}>
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center justify-between w-full text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors"
+              className="flex items-center justify-between w-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               <span className="flex items-center gap-2">
                 Avanceret (orientering og hældning)
@@ -394,7 +430,7 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
               className="overflow-hidden"
             >
               <div className="mt-4 space-y-6">
-                {/* Azimuth / Orientation */}
+                {/* Azimuth / Orientation with Visual Compass */}
                 <div className="space-y-3">
                   <Label className="flex items-center gap-2 text-sm font-medium">
                     Tagets orientering
@@ -403,38 +439,20 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
                       content={
                         <>
                           <p className="mb-2">
-                            Azimut angiver hvilken retning dit tag vender. 180° = direkte mod syd.
+                            Klik på kompasretningen for at vælge hvilken vej dit tag vender.
                           </p>
                           <p>
-                            <strong>Optimal:</strong> Syd (160-200°) giver højeste produktion.
+                            <strong>Optimal:</strong> Syd giver højeste produktion.
                             Øst/vest giver ca. 15-20% mindre produktion.
                           </p>
                         </>
                       }
                     />
                   </Label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {AZIMUTH_OPTIONS.map((option) => (
-                      <motion.button
-                        key={option.value}
-                        type="button"
-                        onClick={() => handleAzimuthChange(option.value)}
-                        whileTap={{ scale: 0.95 }}
-                        className={cn(
-                          'p-2 rounded-lg border text-center text-sm transition-all duration-200',
-                          data.azimuthDegrees === option.value
-                            ? 'border-primary bg-primary/10 text-primary font-semibold'
-                            : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
-                        )}
-                      >
-                        <span className="block text-lg">{option.short}</span>
-                        <span className="block text-xs text-slate-500">{option.value}°</span>
-                      </motion.button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-slate-500">
-                    Sydvendt (180°) giver den bedste produktion. Optimal er 160-200°.
-                  </p>
+                  <CompassPicker
+                    value={data.azimuthDegrees}
+                    onChange={handleAzimuthChange}
+                  />
                 </div>
 
                 {/* Tilt Angle */}
@@ -477,13 +495,13 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
                     className="w-full"
                   />
 
-                  <div className="flex justify-between text-xs text-slate-500">
+                  <div className="flex justify-between text-xs text-muted-foreground">
                     <span>0° (fladt)</span>
                     <span>35° (optimal)</span>
                     <span>90° (lodret)</span>
                   </div>
 
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Optimal hældning i Danmark er 30-40°. De fleste danske tage har 25-45° hældning.
                   </p>
                 </div>

@@ -64,7 +64,7 @@ export function WizardStepper({
                     state === 'current' &&
                       'border-primary bg-primary/10 text-primary ring-4 ring-primary/20',
                     state === 'upcoming' &&
-                      'border-slate-300 bg-white text-slate-400',
+                      'border-border bg-background text-muted-foreground',
                     clickable &&
                       state !== 'current' &&
                       'group-hover:border-primary/60 group-hover:text-primary/80'
@@ -84,7 +84,7 @@ export function WizardStepper({
                       'text-xs font-medium uppercase tracking-wider transition-colors duration-200',
                       state === 'completed' && 'text-primary',
                       state === 'current' && 'text-primary',
-                      state === 'upcoming' && 'text-slate-400'
+                      state === 'upcoming' && 'text-muted-foreground'
                     )}
                   >
                     Trin {step.id}/3
@@ -92,9 +92,9 @@ export function WizardStepper({
                   <span
                     className={cn(
                       'text-sm font-semibold transition-colors duration-200',
-                      state === 'completed' && 'text-slate-700',
-                      state === 'current' && 'text-slate-900',
-                      state === 'upcoming' && 'text-slate-400'
+                      state === 'completed' && 'text-foreground',
+                      state === 'current' && 'text-foreground',
+                      state === 'upcoming' && 'text-muted-foreground'
                     )}
                   >
                     {step.shortTitle}
@@ -107,7 +107,7 @@ export function WizardStepper({
                     'sm:hidden absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium whitespace-nowrap transition-colors duration-200',
                     state === 'completed' && 'text-primary',
                     state === 'current' && 'text-primary',
-                    state === 'upcoming' && 'text-slate-400'
+                    state === 'upcoming' && 'text-muted-foreground'
                   )}
                 >
                   {step.shortTitle}
@@ -122,7 +122,7 @@ export function WizardStepper({
                       'h-0.5 w-full rounded-full transition-colors duration-300',
                       completedSteps.includes(step.id)
                         ? 'bg-primary'
-                        : 'bg-slate-200'
+                        : 'bg-muted'
                     )}
                   />
                 </div>

@@ -79,7 +79,7 @@ export function MobileStickyBar({
         dragConstraints={{ top: 0, bottom: 0 }}
         dragElastic={0.2}
         onDragEnd={handleDragEnd}
-        className="bg-white border-t border-slate-200 shadow-lg touch-none"
+        className="bg-background border-t border-border shadow-lg touch-none"
       >
         {/* Drag handle indicator */}
         <div
@@ -88,7 +88,7 @@ export function MobileStickyBar({
         >
           <motion.div
             animate={{ width: isExpanded ? 32 : 48 }}
-            className="h-1 bg-slate-300 rounded-full"
+            className="h-1 bg-border rounded-full"
           />
         </div>
 
@@ -113,7 +113,7 @@ export function MobileStickyBar({
                   className="text-center mb-3"
                 >
                   {contextText && (
-                    <p className="text-sm font-medium text-slate-600">{contextText}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{contextText}</p>
                   )}
                 </motion.div>
               </AnimatePresence>
@@ -191,7 +191,7 @@ export function MobileStickyBar({
                         ? 'w-6 bg-primary'
                         : index + 1 < currentStep
                         ? 'w-1.5 bg-primary/60'
-                        : 'w-1.5 bg-slate-200'
+                        : 'w-1.5 bg-muted'
                     )}
                     layoutId={`progress-dot-${index}`}
                   />
@@ -203,7 +203,7 @@ export function MobileStickyBar({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.5 }}
                 transition={{ delay: 1 }}
-                className="text-[10px] text-slate-400 text-center mt-2"
+                className="text-[10px] text-muted-foreground text-center mt-2"
               >
                 Swipe op for at fortsætte
               </motion.p>
@@ -219,11 +219,11 @@ export function MobileStickyBar({
             >
               <button
                 onClick={() => setIsExpanded(true)}
-                className="w-full flex items-center justify-center gap-2 py-2 text-sm font-medium text-slate-600 active:text-slate-900 transition-colors touch-manipulation"
+                className="w-full flex items-center justify-center gap-2 py-2 text-sm font-medium text-muted-foreground active:text-foreground transition-colors touch-manipulation"
               >
                 <ChevronUp className="h-4 w-4" />
                 <span>Trin {currentStep} af {totalSteps - 1}</span>
-                <span className="text-slate-400">|</span>
+                <span className="text-muted-foreground">|</span>
                 <span className="text-primary font-semibold">{ctaText}</span>
               </button>
             </motion.div>

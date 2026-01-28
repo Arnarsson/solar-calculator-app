@@ -40,18 +40,18 @@ function KPICard({
   subtitle,
   tooltip,
   format,
-  colorClass = 'from-slate-50 to-slate-100 border-slate-200',
+  colorClass = 'from-muted to-muted/80 border-border',
 }: KPICardProps) {
   return (
     <Card className={`relative overflow-hidden border bg-gradient-to-br ${colorClass} p-5`}>
       <div className="flex items-start justify-between mb-2">
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           {title}
         </span>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button className="text-slate-400 hover:text-slate-600 transition-colors">
+              <button className="text-muted-foreground hover:text-foreground transition-colors">
                 <HelpCircle className="h-4 w-4" />
               </button>
             </TooltipTrigger>
@@ -62,10 +62,10 @@ function KPICard({
         </TooltipProvider>
       </div>
       <div className="space-y-1">
-        <div className="text-3xl font-bold tracking-tight text-slate-900">
+        <div className="text-3xl font-bold tracking-tight text-foreground">
           <AnimatedNumber value={value} format={format} />
         </div>
-        <p className="text-sm text-slate-500">{subtitle}</p>
+        <p className="text-sm text-muted-foreground">{subtitle}</p>
       </div>
     </Card>
   );
@@ -89,7 +89,7 @@ export function KPIGrid({ projection, systemCost, currency = 'DKK' }: KPIGridPro
       subtitle: 'ar',
       tooltip: 'Antal ar for din investering er tjent hjem, justeret for inflation. Beregnet i reale værdier (dagens pengeverdi).',
       format: formatYear,
-      colorClass: 'from-emerald-50 to-emerald-100 border-emerald-200',
+      colorClass: 'from-emerald-50 to-emerald-100 border-emerald-200 dark:from-emerald-950/50 dark:to-emerald-900/30 dark:border-emerald-800/50',
     },
     {
       title: 'ARLIG BESPARELSE',
@@ -97,7 +97,7 @@ export function KPIGrid({ projection, systemCost, currency = 'DKK' }: KPIGridPro
       subtitle: `${currency} i forste ar`,
       tooltip: 'Din forventede besparelse i det forste ar efter installation. Inkluderer bade egetforbrug og salg til nettet.',
       format: formatCurrency,
-      colorClass: 'from-blue-50 to-blue-100 border-blue-200',
+      colorClass: 'from-blue-50 to-blue-100 border-blue-200 dark:from-blue-950/50 dark:to-blue-900/30 dark:border-blue-800/50',
     },
     {
       title: '25-ARS BESPARELSE',
@@ -105,7 +105,7 @@ export function KPIGrid({ projection, systemCost, currency = 'DKK' }: KPIGridPro
       subtitle: `${currency} i dagens værdi`,
       tooltip: 'Total besparelse over 25 ar, beregnet i dagens pengeverdi (realværdi). Tager hojde for inflation og panelernes degradering.',
       format: formatCurrency,
-      colorClass: 'from-indigo-50 to-indigo-100 border-indigo-200',
+      colorClass: 'from-indigo-50 to-indigo-100 border-indigo-200 dark:from-indigo-950/50 dark:to-indigo-900/30 dark:border-indigo-800/50',
     },
     {
       title: 'SYSTEMPRIS',
@@ -113,7 +113,7 @@ export function KPIGrid({ projection, systemCost, currency = 'DKK' }: KPIGridPro
       subtitle: `${currency} inkl. moms`,
       tooltip: 'Samlet pris for dit solcelleanlæg inklusive paneler, inverter, montering og installation. Prisen er inkl. 25% moms.',
       format: formatCurrency,
-      colorClass: 'from-amber-50 to-amber-100 border-amber-200',
+      colorClass: 'from-amber-50 to-amber-100 border-amber-200 dark:from-amber-950/50 dark:to-amber-900/30 dark:border-amber-800/50',
     },
   ];
 

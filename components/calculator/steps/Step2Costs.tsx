@@ -70,7 +70,7 @@ function CostLine({
 
   return (
     <motion.div
-      className="p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-colors"
+      className="p-4 rounded-xl border border-border bg-background hover:border-primary/50 transition-colors"
       variants={itemVariants}
       whileHover={{ scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
@@ -78,7 +78,7 @@ function CostLine({
       <div className="flex items-start justify-between gap-4">
         {/* Label and description */}
         <div className="flex-1 min-w-0">
-          <Label className="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
+          <Label className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
             {label}
             {tooltip && (
               <InfoTooltip
@@ -87,7 +87,7 @@ function CostLine({
               />
             )}
           </Label>
-          <p className="text-xs text-slate-500 mt-0.5">{description}</p>
+          <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
         </div>
 
         {/* Value input or estimate display */}
@@ -99,10 +99,10 @@ function CostLine({
               animate={{ scale: 1, opacity: 1 }}
               className="text-right"
             >
-              <span className="text-lg font-bold text-slate-900">
+              <span className="text-lg font-bold text-foreground">
                 {estimateValue.toLocaleString('da-DK')}
               </span>
-              <span className="text-sm text-slate-500 ml-1">kr</span>
+              <span className="text-sm text-muted-foreground ml-1">kr</span>
             </motion.div>
           ) : (
             <div className="flex items-center gap-2">
@@ -116,15 +116,15 @@ function CostLine({
                 className="w-28 text-right"
                 disabled={useEstimate}
               />
-              <span className="text-sm text-slate-500">kr</span>
+              <span className="text-sm text-muted-foreground">kr</span>
             </div>
           )}
         </div>
       </div>
 
       {/* Estimate toggle */}
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-        <span className="text-xs text-slate-500">
+      <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+        <span className="text-xs text-muted-foreground">
           {useEstimate ? 'Bruger estimat baseret på tagflade' : 'Manuel indtastning'}
         </span>
         <motion.button
@@ -135,7 +135,7 @@ function CostLine({
             'flex items-center gap-2 text-xs font-medium transition-colors',
             useEstimate
               ? 'text-primary hover:text-primary/80'
-              : 'text-slate-500 hover:text-slate-700'
+              : 'text-muted-foreground hover:text-foreground'
           )}
         >
           {useEstimate ? (
@@ -305,17 +305,17 @@ export function Step2Costs({ data, onChange }: Step2CostsProps) {
 
           {/* Totals */}
           <motion.div
-            className="mt-6 p-4 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200"
+            className="mt-6 p-4 rounded-xl bg-gradient-to-br from-muted to-muted/80 border border-border"
             variants={itemVariants}
           >
             {/* Subtotal */}
             <div className="flex items-center justify-between text-sm">
-              <span className="text-slate-600">Subtotal (ekskl. moms)</span>
+              <span className="text-muted-foreground">Subtotal (ekskl. moms)</span>
               <motion.span
                 key={subtotal}
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
-                className="font-semibold text-slate-900"
+                className="font-semibold text-foreground"
               >
                 {subtotal.toLocaleString('da-DK')} kr
               </motion.span>
@@ -323,7 +323,7 @@ export function Step2Costs({ data, onChange }: Step2CostsProps) {
 
             {/* VAT */}
             <div className="flex items-center justify-between text-sm mt-2">
-              <span className="text-slate-600 flex items-center gap-1">
+              <span className="text-muted-foreground flex items-center gap-1">
                 <Percent className="h-3 w-3" />
                 Moms (25%)
               </span>
@@ -331,15 +331,15 @@ export function Step2Costs({ data, onChange }: Step2CostsProps) {
                 key={vatAmount}
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
-                className="font-semibold text-slate-900"
+                className="font-semibold text-foreground"
               >
                 {vatAmount.toLocaleString('da-DK')} kr
               </motion.span>
             </div>
 
             {/* Total */}
-            <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-200">
-              <span className="font-semibold text-slate-900">Total inkl. moms</span>
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+              <span className="font-semibold text-foreground">Total inkl. moms</span>
               <motion.span
                 key={totalWithVat}
                 initial={{ scale: 1.2, color: '#22c55e' }}
@@ -351,8 +351,8 @@ export function Step2Costs({ data, onChange }: Step2CostsProps) {
             </div>
 
             {/* Cost per kWp reference */}
-            <div className="flex items-center justify-between text-xs mt-3 pt-3 border-t border-slate-200">
-              <span className="text-slate-500 flex items-center gap-1">
+            <div className="flex items-center justify-between text-xs mt-3 pt-3 border-t border-border">
+              <span className="text-muted-foreground flex items-center gap-1">
                 Pris pr. kWp ({systemSizeKw.toFixed(1)} kWp system)
                 <InfoTooltip
                   title="Pris pr. kWp"
@@ -374,7 +374,7 @@ export function Step2Costs({ data, onChange }: Step2CostsProps) {
                 key={costPerKwp}
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
-                className="text-slate-700 font-medium"
+                className="text-foreground font-medium"
               >
                 {costPerKwp.toLocaleString('da-DK')} kr/kWp
               </motion.span>

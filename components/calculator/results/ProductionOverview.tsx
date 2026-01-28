@@ -127,12 +127,12 @@ export function ProductionOverview({ projection, selfConsumptionRate }: Producti
                 </p>
                 <p className="text-xs text-emerald-600 mt-1">kWh</p>
               </div>
-              <div className="rounded-xl bg-slate-50 p-4 border border-slate-200">
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Ar 25 produktion</p>
-                <p className="text-2xl font-bold text-slate-900">
+              <div className="rounded-xl bg-muted p-4 border border-border">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Ar 25 produktion</p>
+                <p className="text-2xl font-bold text-foreground">
                   <AnimatedNumber value={metrics.lastYearProduction} format={formatKwh} />
                 </p>
-                <p className="text-xs text-slate-500 mt-1">kWh</p>
+                <p className="text-xs text-muted-foreground mt-1">kWh</p>
               </div>
               <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 p-4 border border-blue-200">
                 <p className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">Total (25 ar)</p>
@@ -158,8 +158,8 @@ export function ProductionOverview({ projection, selfConsumptionRate }: Producti
                     <Zap className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-slate-700">Egetforbrug</span>
-                    <p className="text-xs text-slate-500">ar 1</p>
+                    <span className="text-sm font-medium text-foreground">Egetforbrug</span>
+                    <p className="text-xs text-muted-foreground">ar 1</p>
                   </div>
                 </div>
                 <span className="text-lg font-bold text-emerald-700">
@@ -172,8 +172,8 @@ export function ProductionOverview({ projection, selfConsumptionRate }: Producti
                     <Zap className="h-4 w-4 text-white" />
                   </div>
                   <div>
-                    <span className="text-sm font-medium text-slate-700">Solgt til net</span>
-                    <p className="text-xs text-slate-500">ar 1</p>
+                    <span className="text-sm font-medium text-foreground">Solgt til net</span>
+                    <p className="text-xs text-muted-foreground">ar 1</p>
                   </div>
                 </div>
                 <span className="text-lg font-bold text-blue-700">
@@ -226,14 +226,14 @@ export function ProductionOverview({ projection, selfConsumptionRate }: Producti
               <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 border border-emerald-100">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                  <span className="text-sm text-slate-600">Egetforbrug (ar 1)</span>
+                  <span className="text-sm text-muted-foreground">Egetforbrug (ar 1)</span>
                 </div>
                 <span className="font-semibold text-emerald-700">{metrics.selfConsumedKwh.toLocaleString('da-DK')} kWh</span>
               </div>
               <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-100">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span className="text-sm text-slate-600">Solgt til net (ar 1)</span>
+                  <span className="text-sm text-muted-foreground">Solgt til net (ar 1)</span>
                 </div>
                 <span className="font-semibold text-blue-700">{metrics.exportedKwh.toLocaleString('da-DK')} kWh</span>
               </div>

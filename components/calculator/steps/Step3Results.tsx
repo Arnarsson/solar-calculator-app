@@ -49,33 +49,33 @@ function KpiCard({ icon: Icon, label, value, subtext, highlight = false }: KpiCa
         'p-4 rounded-xl border transition-all duration-200',
         highlight
           ? 'bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20 ring-2 ring-primary/10'
-          : 'bg-white border-slate-200 hover:border-slate-300'
+          : 'bg-background border-border hover:border-primary/50'
       )}
     >
       <div className="flex items-start justify-between mb-2">
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
           {label}
         </span>
         <div
           className={cn(
             'p-2 rounded-lg',
-            highlight ? 'bg-primary/10' : 'bg-slate-100'
+            highlight ? 'bg-primary/10' : 'bg-muted'
           )}
         >
           <Icon
-            className={cn('h-4 w-4', highlight ? 'text-primary' : 'text-slate-600')}
+            className={cn('h-4 w-4', highlight ? 'text-primary' : 'text-muted-foreground')}
           />
         </div>
       </div>
       <div
         className={cn(
           'text-2xl font-bold',
-          highlight ? 'text-primary' : 'text-slate-900'
+          highlight ? 'text-primary' : 'text-foreground'
         )}
       >
         {value}
       </div>
-      {subtext && <p className="text-xs text-slate-500 mt-1">{subtext}</p>}
+      {subtext && <p className="text-xs text-muted-foreground mt-1">{subtext}</p>}
     </div>
   );
 }
@@ -312,10 +312,10 @@ export function Step3Results({ data }: Step3ResultsProps) {
               <TrendingUp className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg text-slate-900 mb-1">
+              <h3 className="font-semibold text-lg text-foreground mb-1">
                 God investering!
               </h3>
-              <p className="text-slate-700">
+              <p className="text-foreground">
                 Med en tilbagebetalingstid på {breakEvenYear} år og en total besparelse på{' '}
                 <strong>{formatCurrency(totalSavings25Year)} kr</strong> over 25 år, er dette
                 en solid investering. Dit anlæg vil producere grøn energi og spare dig penge
