@@ -164,13 +164,88 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| *To be filled by roadmap creation* | | |
+| AUTH-01 | Phase 3 | Pending |
+| AUTH-02 | Phase 3 | Pending |
+| AUTH-03 | Phase 3 | Pending |
+| AUTH-04 | Phase 3 | Pending |
+| AUTH-05 | Phase 3 | Pending |
+| AUTH-06 | Phase 3 | Pending |
+| PAY-01 | Phase 4 | Pending |
+| PAY-02 | Phase 4 | Pending |
+| PAY-03 | Phase 4 | Pending |
+| PAY-04 | Phase 4 | Pending |
+| PAY-05 | Phase 4 | Pending |
+| PAY-06 | Phase 4 | Pending |
+| CALC-01 | Phase 1 | Pending |
+| CALC-02 | Phase 1 | Pending |
+| CALC-03 | Phase 1 | Pending |
+| CALC-04 | Phase 1 | Pending |
+| CALC-05 | Phase 1 | Pending |
+| CALC-06 | Phase 1 | Pending |
+| CALC-07 | Phase 1 | Pending |
+| CALC-08 | Phase 1 | Pending |
+| CALC-09 | Phase 1 | Pending |
+| CALC-10 | Phase 1 | Pending |
+| PANEL-01 | Phase 2 | Pending |
+| PANEL-02 | Phase 2 | Pending |
+| PANEL-03 | Phase 2 | Pending |
+| PANEL-04 | Phase 2 | Pending |
+| PANEL-05 | Phase 2 | Pending |
+| PANEL-06 | Phase 2 | Pending |
+| PANEL-07 | Phase 2 | Pending |
+| BAT-01 | Phase 5 | Pending |
+| BAT-02 | Phase 5 | Pending |
+| BAT-03 | Phase 5 | Pending |
+| BAT-04 | Phase 5 | Pending |
+| BAT-05 | Phase 5 | Pending |
+| EV-01 | Phase 5 | Pending |
+| EV-02 | Phase 5 | Pending |
+| EV-03 | Phase 5 | Pending |
+| EV-04 | Phase 5 | Pending |
+| EV-05 | Phase 5 | Pending |
+| FIN-01 | Phase 1 | Pending |
+| FIN-02 | Phase 1 | Pending |
+| FIN-03 | Phase 2 | Pending |
+| FIN-04 | Phase 1 | Pending |
+| FIN-05 | Phase 1 | Pending |
+| FIN-06 | Phase 1 | Pending |
+| SCEN-01 | Phase 3 | Pending |
+| SCEN-02 | Phase 3 | Pending |
+| SCEN-03 | Phase 3 | Pending |
+| SCEN-04 | Phase 3 | Pending |
+| SCEN-05 | Phase 3 | Pending |
+| SCEN-06 | Phase 3 | Pending |
+| SCEN-07 | Phase 3 | Pending |
+| SCEN-08 | Phase 3 | Pending |
+| EXP-01 | Phase 6 | Pending |
+| EXP-02 | Phase 6 | Pending |
+| EXP-03 | Phase 6 | Pending |
+| EXP-04 | Phase 6 | Pending |
+| EXP-05 | Phase 6 | Pending |
+| UX-01 | Phase 7 | Pending |
+| UX-02 | Phase 7 | Pending |
+| UX-03 | Phase 7 | Pending |
+| UX-04 | Phase 3 | Pending |
+| UX-05 | Phase 7 | Pending |
+| UX-06 | Phase 1 | Pending |
+| UX-07 | Phase 7 | Pending |
+| UX-08 | Phase 4 | Pending |
+| DATA-01 | Phase 1 | Pending |
+| DATA-02 | Phase 1 | Pending |
+| DATA-03 | Phase 1 | Pending |
+| DATA-04 | Phase 3 | Pending |
+| DATA-05 | Phase 1 | Pending |
+| LOC-01 | Phase 7 | Pending |
+| LOC-02 | Phase 7 | Pending |
+| LOC-03 | Phase 7 | Pending |
+| LOC-04 | Phase 7 | Pending |
+| LOC-05 | Phase 7 | Pending |
 
 **Coverage:**
-- v1 requirements: 66 total
-- Mapped to phases: (awaiting roadmap)
-- Unmapped: (awaiting roadmap)
+- v1 requirements: 76 total
+- Mapped to phases: 76/76 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-01-28*
-*Last updated: 2026-01-28 after initial definition*
+*Last updated: 2026-01-28 after roadmap creation*
