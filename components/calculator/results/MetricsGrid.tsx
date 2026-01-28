@@ -1,19 +1,27 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ProjectionResult } from '@/lib/calculations/projection';
 import { TrendingUp, DollarSign, Calendar, Percent, Zap, TrendingDown } from 'lucide-react';
-import Decimal from 'decimal.js';
+
+// Helper to safely get number from string or number
+const toNum = (val: any): number => {
+  if (val === undefined || val === null) return 0;
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') return parseFloat(val);
+  if (val.toNumber) return val.toNumber();
+  return 0;
+};
 
 interface MetricsGridProps {
-  projection: ProjectionResult;
+  projection: any; // Serialized projection from API
   systemSizeKw: number;
-  systemCost: Decimal;
+  systemCost: any; // Can be Decimal or number
   currency?: string;
 }
 
 export function MetricsGrid({ projection, systemSizeKw, systemCost, currency = 'DKK' }: MetricsGridProps) {
   const { summary, years } = projection;
+
+  const systemCostNum = toNum(systemCost);
 
   // Format currency
   const formatCurrency = (value: number) => {
@@ -32,109 +40,78 @@ export function MetricsGrid({ projection, systemSizeKw, systemCost, currency = '
     }).format(value);
   };
 
-  // Calculate additional metrics
-  const firstYearProduction = years[0].productionKwh.toNumber();
-  const lastYearProduction = years[years.length - 1].productionKwh.toNumber();
-  const totalProduction = years.reduce((sum, y) => sum + y.productionKwh.toNumber(), 0);
+  // Calculate additional metrics from serialized data
+  const firstYearProduction = toNum(years[0]?.productionKwh);
+  const lastYearProduction = toNum(years[years.length - 1]?.productionKwh);
+  const totalProduction = years.reduce((sum: number, y: any) => sum + toNum(y.productionKwh), 0);
 
-  const costPerKw = systemCost.dividedBy(systemSizeKw).toNumber();
-  const costPerKwh25Year = systemCost.dividedBy(totalProduction).toNumber();
+  const costPerKw = systemCostNum / systemSizeKw;
+  const costPerKwh25Year = systemCostNum / totalProduction;
 
-  const firstYearSavings = years[0].netSavingsNominal.toNumber();
-  const avgAnnualSavings = summary.totalSavingsNominal.dividedBy(25).toNumber();
+  const firstYearSavings = toNum(years[0]?.netSavingsNominal);
+  const totalSavingsNominal = toNum(summary?.totalSavingsNominal);
+  const avgAnnualSavings = totalSavingsNominal / 25;
 
   const totalDegradation = ((firstYearProduction - lastYearProduction) / firstYearProduction) * 100;
 
   const metrics = [
     {
       icon: DollarSign,
-      label: 'System Cost',
-      value: `${formatCurrency(systemCost.toNumber())} ${currency}`,
+      label: 'Systempris',
+      value: `${formatCurrency(systemCostNum)} ${currency}`,
       subtext: `${formatCurrency(costPerKw)} ${currency}/kW`,
     },
     {
       icon: Zap,
-      label: 'System Size',
-      value: `${systemSizeKw.toFixed(2)} kW`,
-      subtext: `${formatNumber(firstYearProduction / systemSizeKw)} kWh/kW/year`,
+      label: 'Systemstørrelse',
+      value: `${systemSizeKw.toFixed(1)} kW`,
+      subtext: `${formatNumber(firstYearProduction / systemSizeKw)} kWh/kW/år`,
     },
     {
       icon: TrendingUp,
-      label: 'Total Savings (Nominal)',
-      value: `${formatCurrency(summary.totalSavingsNominal.toNumber())} ${currency}`,
-      subtext: `${formatCurrency(avgAnnualSavings)} ${currency}/year avg`,
-    },
-    {
-      icon: TrendingUp,
-      label: 'Total Savings (Real)',
-      value: `${formatCurrency(summary.totalSavingsReal.toNumber())} ${currency}`,
-      subtext: "In today's value",
+      label: 'Total Besparelse',
+      value: `${formatCurrency(toNum(summary?.totalSavingsReal))} ${currency}`,
+      subtext: "I dagens værdi",
     },
     {
       icon: Calendar,
-      label: 'Payback Period (Real)',
-      value: `${summary.breakEvenYearReal} years`,
-      subtext: `${summary.breakEvenYearNominal} years (nominal)`,
+      label: 'Tilbagebetaling',
+      value: `${summary?.breakEvenYearReal || '-'} år`,
+      subtext: `${summary?.breakEvenYearNominal || '-'} år (nominelt)`,
     },
     {
       icon: Percent,
-      label: 'Return on Investment',
-      value: `${summary.roi25Year.toFixed(1)}%`,
-      subtext: 'Over 25 years',
+      label: 'Afkast (ROI)',
+      value: `${toNum(summary?.roi25Year).toFixed(0)}%`,
+      subtext: 'Over 25 år',
     },
     {
       icon: Zap,
-      label: 'Total Production',
+      label: 'Total Produktion',
       value: `${formatCurrency(totalProduction)} kWh`,
-      subtext: 'Over 25 years',
-    },
-    {
-      icon: DollarSign,
-      label: 'Cost per kWh',
-      value: `${costPerKwh25Year.toFixed(2)} ${currency}`,
-      subtext: '25-year average',
-    },
-    {
-      icon: TrendingUp,
-      label: 'First Year Savings',
-      value: `${formatCurrency(firstYearSavings)} ${currency}`,
-      subtext: 'After maintenance',
-    },
-    {
-      icon: TrendingDown,
-      label: 'Total Degradation',
-      value: `${totalDegradation.toFixed(1)}%`,
-      subtext: 'Year 1 to Year 25',
-    },
-    {
-      icon: DollarSign,
-      label: 'Maintenance Cost',
-      value: `${formatCurrency(summary.totalMaintenanceCost.toNumber())} ${currency}`,
-      subtext: 'Total over 25 years',
-    },
-    {
-      icon: Percent,
-      label: 'Annualized Return',
-      value: `${(summary.roi25Year.dividedBy(25)).toFixed(2)}%`,
-      subtext: 'Average per year',
+      subtext: 'Over 25 år',
     },
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className="grid gap-4 grid-cols-2 lg:grid-cols-3">
       {metrics.map((metric, index) => {
         const Icon = metric.icon;
         return (
-          <Card key={index}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{metric.label}</CardTitle>
-              <Icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-xl font-bold">{metric.value}</div>
-              <p className="text-xs text-muted-foreground mt-1">{metric.subtext}</p>
-            </CardContent>
-          </Card>
+          <div key={index} className="metric-card group">
+            <div className="flex flex-row items-center justify-between mb-3">
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                {metric.label}
+              </h3>
+              <div className="p-2 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                <Icon className="h-4 w-4 text-blue-600" />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold tracking-tight text-slate-900">{metric.value}</div>
+              <p className="text-xs text-slate-500">{metric.subtext}</p>
+            </div>
+          </div>
         );
       })}
     </div>

@@ -1,0 +1,127 @@
+'use client';
+
+import { Card } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { AnimatedNumber } from '@/components/ui/animated-number';
+import { HelpCircle } from 'lucide-react';
+
+// Helper to safely get number
+const toNum = (val: any): number => {
+  if (val === undefined || val === null) return 0;
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') return parseFloat(val);
+  if (val.toNumber) return val.toNumber();
+  return 0;
+};
+
+interface KPIGridProps {
+  projection: any;
+  systemCost: any;
+  currency?: string;
+}
+
+interface KPICardProps {
+  title: string;
+  value: number;
+  subtitle: string;
+  tooltip: string;
+  format?: (n: number) => string;
+  colorClass?: string;
+}
+
+function KPICard({
+  title,
+  value,
+  subtitle,
+  tooltip,
+  format,
+  colorClass = 'from-slate-50 to-slate-100 border-slate-200',
+}: KPICardProps) {
+  return (
+    <Card className={`relative overflow-hidden border bg-gradient-to-br ${colorClass} p-5`}>
+      <div className="flex items-start justify-between mb-2">
+        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          {title}
+        </span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button className="text-slate-400 hover:text-slate-600 transition-colors">
+                <HelpCircle className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-xs">
+              <p className="text-sm">{tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <div className="space-y-1">
+        <div className="text-3xl font-bold tracking-tight text-slate-900">
+          <AnimatedNumber value={value} format={format} />
+        </div>
+        <p className="text-sm text-slate-500">{subtitle}</p>
+      </div>
+    </Card>
+  );
+}
+
+export function KPIGrid({ projection, systemCost, currency = 'DKK' }: KPIGridProps) {
+  const { summary } = projection;
+
+  const systemCostNum = toNum(systemCost);
+  const breakEvenYear = toNum(summary?.breakEvenYearReal) || 0;
+  const firstYearSavings = toNum(projection.years?.[0]?.netSavingsReal) || 0;
+  const totalSavingsReal = toNum(summary?.totalSavingsReal) || 0;
+
+  const formatYear = (n: number) => n.toFixed(1);
+  const formatCurrency = (n: number) => n.toLocaleString('da-DK', { maximumFractionDigits: 0 });
+
+  const kpis: KPICardProps[] = [
+    {
+      title: 'TILBAGEBETALING',
+      value: breakEvenYear,
+      subtitle: 'ar',
+      tooltip: 'Antal ar for din investering er tjent hjem, justeret for inflation. Beregnet i reale værdier (dagens pengeverdi).',
+      format: formatYear,
+      colorClass: 'from-emerald-50 to-emerald-100 border-emerald-200',
+    },
+    {
+      title: 'ARLIG BESPARELSE',
+      value: firstYearSavings,
+      subtitle: `${currency} i forste ar`,
+      tooltip: 'Din forventede besparelse i det forste ar efter installation. Inkluderer bade egetforbrug og salg til nettet.',
+      format: formatCurrency,
+      colorClass: 'from-blue-50 to-blue-100 border-blue-200',
+    },
+    {
+      title: '25-ARS BESPARELSE',
+      value: totalSavingsReal,
+      subtitle: `${currency} i dagens værdi`,
+      tooltip: 'Total besparelse over 25 ar, beregnet i dagens pengeverdi (realværdi). Tager hojde for inflation og panelernes degradering.',
+      format: formatCurrency,
+      colorClass: 'from-indigo-50 to-indigo-100 border-indigo-200',
+    },
+    {
+      title: 'SYSTEMPRIS',
+      value: systemCostNum,
+      subtitle: `${currency} inkl. moms`,
+      tooltip: 'Samlet pris for dit solcelleanlæg inklusive paneler, inverter, montering og installation. Prisen er inkl. 25% moms.',
+      format: formatCurrency,
+      colorClass: 'from-amber-50 to-amber-100 border-amber-200',
+    },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {kpis.map((kpi, index) => (
+        <KPICard key={index} {...kpi} />
+      ))}
+    </div>
+  );
+}

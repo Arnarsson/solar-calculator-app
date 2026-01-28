@@ -1,8 +1,4 @@
 'use client';
-
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import {
   Accordion,
   AccordionContent,
@@ -13,14 +9,18 @@ import { BookOpen, ExternalLink } from 'lucide-react';
 
 export function MethodologyPanel() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5" />
-          Beregningsmetode og forudsætninger
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
+    <div className="card-premium p-8">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-primary/10">
+          <BookOpen className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold">Beregningsmetode og forudsætninger</h2>
+          <p className="text-sm text-muted-foreground">Gennemsigtighed i alle beregninger</p>
+        </div>
+      </div>
+
+      <div>
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="production">
             <AccordionTrigger>Produktionsberegning</AccordionTrigger>
@@ -127,32 +127,6 @@ export function MethodologyPanel() {
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="tax">
-            <AccordionTrigger>Skattescenarier</AccordionTrigger>
-            <AccordionContent className="space-y-3 text-sm">
-              <p>
-                <strong>Håndværkerfradrag (2026):</strong> Vi modellerer det danske håndværkerfradrag,
-                som giver skattefradrag for arbejdsløn ved energiforbedringer.
-              </p>
-
-              <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 p-3 rounded-md">
-                <p className="text-amber-800 dark:text-amber-200 font-medium">
-                  ⚠️ Forbehold
-                </p>
-                <p className="text-amber-700 dark:text-amber-300 text-xs mt-1">
-                  Skatteværdier er estimater baseret på historiske regler. De faktiske 2026-regler
-                  bør verificeres med SKAT eller en skatteekspert før endelig beslutning.
-                </p>
-              </div>
-
-              <ul className="list-disc list-inside space-y-1 mt-3">
-                <li>Fradrag gælder kun for arbejdsløn (ikke udstyr)</li>
-                <li>Maksimalt fradrag pr. år</li>
-                <li>Afhænger af din skattesituation</li>
-              </ul>
-            </AccordionContent>
-          </AccordionItem>
-
           <AccordionItem value="accuracy">
             <AccordionTrigger>Præcision og afrunding</AccordionTrigger>
             <AccordionContent className="space-y-3 text-sm">
@@ -175,18 +149,18 @@ export function MethodologyPanel() {
           </AccordionItem>
         </Accordion>
 
-        <div className="mt-6 pt-4 border-t text-center text-xs text-muted-foreground">
-          <p>
-            Beregningsmotor version 1.0.0 • Sidst opdateret: Januar 2026
+        <div className="mt-8 pt-6 border-t text-center">
+          <p className="text-sm text-muted-foreground">
+            Beregningsmotor <span className="font-semibold text-foreground">v1.0.0</span> • Sidst opdateret: Januar 2026
           </p>
-          <p className="mt-1">
+          <p className="text-sm text-muted-foreground mt-2">
             Har du spørgsmål til metoden?{' '}
-            <a href="mailto:support@example.com" className="text-primary hover:underline">
+            <a href="mailto:support@example.com" className="text-primary hover:text-primary/80 font-medium transition-colors">
               Kontakt os
             </a>
           </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

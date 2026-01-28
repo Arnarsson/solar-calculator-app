@@ -1,139 +1,192 @@
 'use client';
 
+import { Pie, PieChart, Cell, Label } from 'recharts';
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Button } from '@/components/ui/button';
+import { Pencil } from 'lucide-react';
 import Decimal from 'decimal.js';
 
-interface CostItem {
-  name: string;
-  value: Decimal;
-}
+// Helper to safely get number
+const toNum = (val: any): number => {
+  if (val === undefined || val === null) return 0;
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') return parseFloat(val);
+  if (val.toNumber) return val.toNumber();
+  return 0;
+};
 
 interface CostBreakdownProps {
   costs: {
-    panels: Decimal;
-    inverter: Decimal;
-    installation: Decimal;
-    other?: Decimal;
+    panels: Decimal | number;
+    inverter: Decimal | number;
+    installation: Decimal | number;
+    other?: Decimal | number;
   };
   currency?: string;
+  onEditCosts?: () => void;
 }
 
 const COLORS = [
-  'hsl(var(--chart-1))', // Solar orange - panels
-  'hsl(var(--chart-2))', // Green - inverter
-  'hsl(var(--chart-3))', // Blue - installation
-  'hsl(var(--chart-4))', // Purple - other
+  'hsl(220, 90%, 56%)',
+  'hsl(142, 71%, 45%)',
+  'hsl(38, 92%, 50%)',
+  'hsl(280, 65%, 60%)',
 ];
 
-export function CostBreakdown({ costs, currency = 'DKK' }: CostBreakdownProps) {
-  // Prepare data for pie chart
-  const data: { name: string; value: number; percentage: number }[] = [];
-  const total = costs.panels
-    .plus(costs.inverter)
-    .plus(costs.installation)
-    .plus(costs.other || new Decimal(0));
+const chartConfig = {
+  value: { label: 'Belob' },
+  panels: { label: 'Solceller', color: COLORS[0] },
+  inverter: { label: 'Inverter', color: COLORS[1] },
+  installation: { label: 'Installation', color: COLORS[2] },
+  other: { label: 'Andet', color: COLORS[3] },
+} satisfies ChartConfig;
 
-  const items: CostItem[] = [
-    { name: 'Solar Panels', value: costs.panels },
-    { name: 'Inverter', value: costs.inverter },
-    { name: 'Installation', value: costs.installation },
+export function CostBreakdown({ costs, currency = 'DKK', onEditCosts }: CostBreakdownProps) {
+  const panelsVal = toNum(costs.panels);
+  const inverterVal = toNum(costs.inverter);
+  const installationVal = toNum(costs.installation);
+  const otherVal = toNum(costs.other);
+  const total = panelsVal + inverterVal + installationVal + otherVal;
+
+  const data = [
+    { name: 'Solceller', value: panelsVal, fill: COLORS[0] },
+    { name: 'Inverter', value: inverterVal, fill: COLORS[1] },
+    { name: 'Installation', value: installationVal, fill: COLORS[2] },
   ];
 
-  if (costs.other && costs.other.greaterThan(0)) {
-    items.push({ name: 'Other', value: costs.other });
+  if (otherVal > 0) {
+    data.push({ name: 'Andet', value: otherVal, fill: COLORS[3] });
   }
 
-  items.forEach((item) => {
-    data.push({
-      name: item.name,
-      value: item.value.toNumber(),
-      percentage: item.value.dividedBy(total).times(100).toNumber(),
-    });
-  });
-
-  // Format currency
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('da-DK', {
-      style: 'decimal',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
-  };
-
-  // Custom label
-  const renderCustomLabel = (entry: any) => {
-    return `${entry.percentage.toFixed(1)}%`;
-  };
-
-  // Custom tooltip
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      const entry = payload[0];
-      return (
-        <div className="bg-background border border-border rounded-lg shadow-lg p-3">
-          <p className="font-semibold mb-1">{entry.name}</p>
-          <p className="text-sm">
-            {formatCurrency(entry.value)} {currency}
-          </p>
-          <p className="text-xs text-muted-foreground">{entry.payload.percentage.toFixed(1)}%</p>
-        </div>
-      );
-    }
-    return null;
-  };
+  const formatCurrency = (value: number) => Math.round(value).toLocaleString('da-DK');
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>System Cost Breakdown</CardTitle>
-        <CardDescription>
-          Total: {formatCurrency(total.toNumber())} {currency}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer width="100%" height={300}>
-          <PieChart>
-            <Pie
-              data={data}
-              cx="50%"
-              cy="50%"
-              labelLine={false}
-              label={renderCustomLabel}
-              outerRadius={100}
-              fill="#8884d8"
-              dataKey="value"
+    <Card className="border-0 shadow-lg">
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-xl">Omkostningsopdeling</CardTitle>
+            <CardDescription>
+              Total investering inkl. 25% moms
+            </CardDescription>
+          </div>
+          {onEditCosts && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onEditCosts}
+              className="gap-2"
             >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip content={<CustomTooltip />} />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
+              <Pencil className="h-4 w-4" />
+              Rediger omkostninger
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="pt-4">
+        <div className="grid md:grid-cols-2 gap-6 items-center">
+          {/* Donut chart with center label */}
+          <ChartContainer config={chartConfig} className="mx-auto aspect-square h-[250px]">
+            <PieChart>
+              <ChartTooltip
+                content={
+                  <ChartTooltipContent
+                    formatter={(value, name) => (
+                      <div className="flex items-center justify-between gap-8">
+                        <span className="text-muted-foreground">{name}</span>
+                        <span className="font-bold">{Number(value).toLocaleString('da-DK')} {currency}</span>
+                      </div>
+                    )}
+                  />
+                }
+              />
+              <Pie
+                data={data}
+                cx="50%"
+                cy="50%"
+                innerRadius={70}
+                outerRadius={100}
+                paddingAngle={3}
+                dataKey="value"
+                nameKey="name"
+                strokeWidth={2}
+                stroke="hsl(var(--background))"
+              >
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+                <Label
+                  content={({ viewBox }) => {
+                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                      return (
+                        <text
+                          x={viewBox.cx}
+                          y={viewBox.cy}
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                        >
+                          <tspan
+                            x={viewBox.cx}
+                            y={viewBox.cy}
+                            className="fill-foreground text-2xl font-bold"
+                          >
+                            {formatCurrency(total)}
+                          </tspan>
+                          <tspan
+                            x={viewBox.cx}
+                            y={(viewBox.cy || 0) + 24}
+                            className="fill-muted-foreground text-sm"
+                          >
+                            {currency}
+                          </tspan>
+                        </text>
+                      );
+                    }
+                  }}
+                />
+              </Pie>
+            </PieChart>
+          </ChartContainer>
 
-        {/* Detailed breakdown table */}
-        <div className="mt-6 space-y-2">
-          {items.map((item, index) => (
-            <div key={item.name} className="flex justify-between items-center py-2 border-b border-border">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-3 h-3 rounded"
-                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                ></div>
-                <span className="text-sm font-medium">{item.name}</span>
+          {/* Breakdown list */}
+          <div className="space-y-3">
+            {data.map((item) => (
+              <div
+                key={item.name}
+                className="flex items-center justify-between p-4 rounded-xl border bg-slate-50/50 hover:bg-slate-100/80 transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-4 h-4 rounded-full shadow-sm"
+                    style={{ backgroundColor: item.fill }}
+                  />
+                  <span className="font-medium text-slate-700">{item.name}</span>
+                </div>
+                <div className="text-right">
+                  <div className="font-bold text-slate-900">
+                    {formatCurrency(item.value)} {currency}
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    {((item.value / total) * 100).toFixed(0)}%
+                  </div>
+                </div>
               </div>
-              <div className="text-right">
-                <span className="font-semibold">
-                  {formatCurrency(item.value.toNumber())} {currency}
-                </span>
-                <span className="text-xs text-muted-foreground ml-2">
-                  ({item.value.dividedBy(total).times(100).toFixed(1)}%)
-                </span>
-              </div>
+            ))}
+
+            {/* Total row */}
+            <div className="flex items-center justify-between p-4 rounded-xl border-2 border-slate-200 bg-slate-100/50 mt-4">
+              <span className="font-semibold text-slate-800">Total</span>
+              <span className="text-xl font-bold text-slate-900">
+                {formatCurrency(total)} {currency}
+              </span>
             </div>
-          ))}
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -19,7 +19,7 @@ export function useCalculatorForm(options: UseCalculatorFormOptions = {}) {
 
   const [input, setInput] = useState<CalculatorInput>(defaultCalculatorInput);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const [isDirty, setIsDirty] = useState(false);
+  const [isDirty, setIsDirty] = useState(true); // Start dirty to show results immediately
 
   // Validate input
   const validateInput = useCallback((data: CalculatorInput) => {
@@ -80,12 +80,14 @@ export function useCalculatorForm(options: UseCalculatorFormOptions = {}) {
     setIsDirty(false);
   }, []);
 
-  // Auto-detect price area from longitude
+  // Auto-detect price area from longitude (only if longitude is set)
   useEffect(() => {
-    // DK1 (West) if longitude < 10.5, otherwise DK2 (East)
-    const newPriceArea = input.longitude < 10.5 ? 'DK1' : 'DK2';
-    if (input.priceArea !== newPriceArea) {
-      setInput((prev) => ({ ...prev, priceArea: newPriceArea }));
+    if (input.longitude !== undefined) {
+      // DK1 (West) if longitude < 10.5, otherwise DK2 (East)
+      const newPriceArea = input.longitude < 10.5 ? 'DK1' : 'DK2';
+      if (input.priceArea !== newPriceArea) {
+        setInput((prev) => ({ ...prev, priceArea: newPriceArea }));
+      }
     }
   }, [input.longitude, input.priceArea]);
 

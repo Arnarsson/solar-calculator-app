@@ -2,18 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import Decimal from 'decimal.js';
 import { calculateSetupCost } from '@/lib/calculations/setupPricing';
 import { calculatePayback } from '@/lib/calculations/payback';
-import { calculateTaxScenario, compareTaxScenarios } from '@/lib/calculations/taxScenarios';
+import { calculateProjection } from '@/lib/calculations/projection';
 import {
   serializeSetupCost,
   serializePayback,
-  serializeTaxScenario,
+  serializeProjection,
 } from '@/lib/utils/serialization';
 import { fetchPVGISData, estimateProductionFromArea } from '@/lib/api/pvgis';
 
 export interface CalculateRequest {
-  // Location
-  latitude: number;
-  longitude: number;
+  // Location (optional - for PVGIS lookup)
+  latitude?: number;
+  longitude?: number;
   priceArea: 'DK1' | 'DK2';
 
   // Roof
@@ -30,6 +30,11 @@ export interface CalculateRequest {
   // Energy
   electricityRateDkk: number;
   selfConsumptionRate: number;
+
+  // Projection settings
+  inflationRate?: number;
+  electricityPriceIncrease?: number;
+  maintenanceCostDkk?: number;
 }
 
 export async function POST(request: NextRequest) {
@@ -45,22 +50,28 @@ export async function POST(request: NextRequest) {
     });
 
     // 2. Estimate annual production
-    // First try PVGIS, fallback to area-based estimate
+    // Try PVGIS if coordinates provided, otherwise use area-based estimate
     let annualProductionKwh: Decimal;
     let productionSource: 'pvgis' | 'estimate';
 
-    try {
-      const pvgisData = await fetchPVGISData({
-        latitude: body.latitude,
-        longitude: body.longitude,
-        peakPowerKw: new Decimal(body.roofAreaM2).times('0.2').toNumber(), // ~200W/m2
-        azimuth: body.azimuthDegrees,
-        tilt: body.tiltDegrees,
-      });
-      annualProductionKwh = pvgisData.annualProductionKwh;
-      productionSource = 'pvgis';
-    } catch (error) {
-      // Fallback to estimate
+    if (body.latitude && body.longitude) {
+      try {
+        const pvgisData = await fetchPVGISData({
+          latitude: body.latitude,
+          longitude: body.longitude,
+          peakPowerKw: new Decimal(body.roofAreaM2).times('0.2').toNumber(), // ~200W/m2
+          azimuth: body.azimuthDegrees,
+          tilt: body.tiltDegrees,
+        });
+        annualProductionKwh = pvgisData.annualProductionKwh;
+        productionSource = 'pvgis';
+      } catch (error) {
+        // Fallback to estimate if PVGIS fails
+        annualProductionKwh = estimateProductionFromArea(new Decimal(body.roofAreaM2));
+        productionSource = 'estimate';
+      }
+    } else {
+      // No coordinates provided - use area-based estimate
       annualProductionKwh = estimateProductionFromArea(new Decimal(body.roofAreaM2));
       productionSource = 'estimate';
     }
@@ -75,14 +86,22 @@ export async function POST(request: NextRequest) {
       gridFeedInRate,
     });
 
-    // 4. Calculate tax scenarios
-    const taxScenarios = compareTaxScenarios({
+    // 4. Calculate 25-year projection
+    const projection = calculateProjection({
       systemCost: setupCost.totalWithVat,
-      installationLaborCost: new Decimal(body.installationCost),
-      panelsCost: new Decimal(body.panelsCost),
-      inverterCost: new Decimal(body.inverterCost),
-      annualSavings: payback.annualSavings,
+      annualProductionKwh,
+      electricityRateDkk: new Decimal(body.electricityRateDkk),
+      selfConsumptionRate: new Decimal(body.selfConsumptionRate),
+      gridFeedInRate,
+      inflationRate: new Decimal(body.inflationRate ?? 0.02),
+      electricityInflationRate: new Decimal(body.electricityPriceIncrease ?? 0.03),
+      maintenanceCostYear1: new Decimal(body.maintenanceCostDkk ?? 1000),
+      degradationRateFirstYear: new Decimal('0.03'),
+      degradationRateAnnual: new Decimal('0.005'),
     });
+
+    // Calculate system size
+    const systemSizeKw = new Decimal(body.roofAreaM2).times('0.2').toNumber();
 
     // 5. Return serialized results
     return NextResponse.json({
@@ -90,7 +109,9 @@ export async function POST(request: NextRequest) {
       annualProductionKwh: annualProductionKwh.toFixed(2),
       productionSource,
       payback: serializePayback(payback),
-      taxScenarios: taxScenarios.map(serializeTaxScenario),
+      projection: serializeProjection(projection),
+      systemSizeKw,
+      estimatedYield: annualProductionKwh.dividedBy(systemSizeKw).toFixed(0),
     });
   } catch (error) {
     console.error('Calculation error:', error);

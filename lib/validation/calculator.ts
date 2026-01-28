@@ -7,14 +7,18 @@ const DENMARK_LON_MIN = 8.0;
 const DENMARK_LON_MAX = 15.2;
 
 export const locationSchema = z.object({
+  // Coordinates are optional - used for PVGIS lookup if provided
   latitude: z
     .number()
     .min(DENMARK_LAT_MIN, 'Latitude must be within Denmark')
-    .max(DENMARK_LAT_MAX, 'Latitude must be within Denmark'),
+    .max(DENMARK_LAT_MAX, 'Latitude must be within Denmark')
+    .optional(),
   longitude: z
     .number()
     .min(DENMARK_LON_MIN, 'Longitude must be within Denmark')
-    .max(DENMARK_LON_MAX, 'Longitude must be within Denmark'),
+    .max(DENMARK_LON_MAX, 'Longitude must be within Denmark')
+    .optional(),
+  // Price area is required for electricity pricing
   priceArea: z.enum(['DK1', 'DK2']),
 });
 
@@ -75,9 +79,9 @@ export type CalculatorInput = z.infer<typeof calculatorInputSchema>;
 
 // Default values for new calculator
 export const defaultCalculatorInput: CalculatorInput = {
-  // Location (Copenhagen default)
-  latitude: 55.6761,
-  longitude: 12.5683,
+  // Location (Copenhagen default - optional for basic flow)
+  latitude: undefined,
+  longitude: undefined,
   priceArea: 'DK2',
 
   // Roof (typical Danish house)

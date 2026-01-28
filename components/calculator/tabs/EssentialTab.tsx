@@ -22,7 +22,11 @@ export function EssentialTab({ input, onFieldChange, errors }: EssentialTabProps
         errors={errors}
       />
 
-      <hr className="border-border" />
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border"></div>
+        </div>
+      </div>
 
       <RoofInput
         roofAreaM2={input.roofAreaM2}

@@ -2,7 +2,6 @@ import Decimal from 'decimal.js';
 import { YearResult, ProjectionResult, ProjectionSummary } from '@/lib/calculations/projection';
 import { PaybackResult } from '@/lib/calculations/payback';
 import { SetupCostResult } from '@/lib/calculations/setupPricing';
-import { TaxScenarioResult } from '@/lib/calculations/taxScenarios';
 
 /**
  * Serialize a single Decimal to string with full precision
@@ -74,17 +73,6 @@ export interface SerializedSetupCostResult {
   totalWithVat: string;
 }
 
-export interface SerializedTaxScenarioResult {
-  scenario: string;
-  eligibleAmount: string;
-  deductionRate: string;
-  taxDeduction: string;
-  maxDeduction: string;
-  effectiveCost: string;
-  effectivePaybackYears: string;
-  assumptions: string[];
-}
-
 // Serializer functions
 export function serializePayback(result: PaybackResult): SerializedPaybackResult {
   return {
@@ -132,18 +120,5 @@ export function serializeSetupCost(result: SetupCostResult): SerializedSetupCost
     vatRate: serializeDecimalFixed(result.vatRate, 4),
     vatAmount: serializeDecimalFixed(result.vatAmount),
     totalWithVat: serializeDecimalFixed(result.totalWithVat),
-  };
-}
-
-export function serializeTaxScenario(result: TaxScenarioResult): SerializedTaxScenarioResult {
-  return {
-    scenario: result.scenario,
-    eligibleAmount: serializeDecimalFixed(result.eligibleAmount),
-    deductionRate: serializeDecimalFixed(result.deductionRate, 4),
-    taxDeduction: serializeDecimalFixed(result.taxDeduction),
-    maxDeduction: serializeDecimalFixed(result.maxDeduction),
-    effectiveCost: serializeDecimalFixed(result.effectiveCost),
-    effectivePaybackYears: serializeDecimalFixed(result.effectivePaybackYears),
-    assumptions: result.assumptions,
   };
 }
