@@ -236,7 +236,7 @@ export function SavingsChart({ projection, currency = 'DKK' }: SavingsChartProps
           </ChartContainer>
         )}
 
-        <div className="mt-4 flex items-center justify-between text-sm border-t pt-4">
+        <div className="mt-4 flex items-center justify-between text-sm border-t border-border pt-4">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
             <span className="text-muted-foreground">Break-even efter</span>

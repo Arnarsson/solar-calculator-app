@@ -9,7 +9,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { InfoTooltip, ExplainerCard } from '@/components/ui/info-tooltip';
-import { SegmentedToggle } from '@/components/ui/segmented-toggle';
 import { CompassPicker } from '../CompassPicker';
 import { cn } from '@/lib/utils';
 import type { WizardData } from '../WizardLayout';
@@ -59,7 +58,7 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
   const [priceError, setPriceError] = useState<string | null>(null);
   const [priceSource, setPriceSource] = useState<string | null>(null);
 
-  // Fetch current electricity price from Min Strøm API
+  // Fetch current electricity price from Energi Data Service
   const fetchCurrentPrice = async () => {
     setIsFetchingPrice(true);
     setPriceError(null);
@@ -73,9 +72,9 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
 
       const priceData = await response.json();
 
-      // Update electricity rate with fetched average price
-      onChange({ electricityRateDkk: Math.round(priceData.averagePrice * 100) / 100 });
-      setPriceSource(`Min Strøm (${data.priceArea})`);
+      // Update electricity rate with fetched current price (spot + fees/taxes)
+      onChange({ electricityRateDkk: priceData.currentPrice });
+      setPriceSource(`Spotpris ${data.priceArea}: ${priceData.spotPrice.toFixed(2)} kr + afgifter`);
     } catch (error) {
       console.error('Error fetching price:', error);
       setPriceError('Kunne ikke hente pris. Prøv igen eller indtast manuelt.');
@@ -148,15 +147,25 @@ export function Step1BasicInfo({ data, onChange }: Step1BasicInfoProps) {
                 }
               />
             </Label>
-            <SegmentedToggle
-              options={PRICE_AREAS.map((area) => ({
-                value: area.value,
-                label: area.label,
-                description: area.description,
-              }))}
-              value={data.priceArea}
-              onChange={handlePriceAreaChange}
-            />
+            <div className="grid grid-cols-2 gap-3">
+              {PRICE_AREAS.map((area) => (
+                <motion.button
+                  key={area.value}
+                  type="button"
+                  onClick={() => handlePriceAreaChange(area.value)}
+                  whileTap={{ scale: 0.98 }}
+                  className={cn(
+                    'p-4 rounded-xl border-2 text-left transition-all duration-200',
+                    data.priceArea === area.value
+                      ? 'border-primary bg-primary/5 ring-2 ring-primary/20'
+                      : 'border-border hover:border-primary/50 hover:bg-muted'
+                  )}
+                >
+                  <span className="font-semibold text-foreground">{area.label}</span>
+                  <p className="text-xs text-muted-foreground mt-1">{area.description}</p>
+                </motion.button>
+              ))}
+            </div>
           </motion.div>
 
           {/* Electricity Price */}

@@ -43,8 +43,9 @@ export function InfoTooltip({
     <TooltipProvider delayDuration={100}>
       <Tooltip open={isOpen} onOpenChange={setIsOpen}>
         <TooltipTrigger asChild>
-          <button
-            type="button"
+          <span
+            role="button"
+            tabIndex={0}
             onClick={(e) => {
               e.preventDefault();
               setIsOpen(!isOpen);
@@ -53,10 +54,16 @@ export function InfoTooltip({
               e.preventDefault();
               setIsOpen(!isOpen);
             }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setIsOpen(!isOpen);
+              }
+            }}
             className={cn(
-              'inline-flex items-center justify-center rounded-full p-0.5',
-              'text-slate-400 hover:text-slate-600 focus:text-slate-600',
-              'hover:bg-slate-100 focus:bg-slate-100',
+              'inline-flex items-center justify-center rounded-full p-0.5 cursor-pointer',
+              'text-muted-foreground hover:text-foreground focus:text-foreground',
+              'hover:bg-muted focus:bg-muted',
               'transition-colors duration-150',
               'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50',
               'touch-manipulation', // Better touch handling
@@ -65,14 +72,14 @@ export function InfoTooltip({
             aria-label={title || 'Vis mere information'}
           >
             <Icon className={cn('h-4 w-4', iconClassName)} />
-          </button>
+          </span>
         </TooltipTrigger>
         <TooltipContent
           side={side}
           sideOffset={8}
           className={cn(
-            'z-[100] p-0 shadow-xl border-slate-200/80',
-            'bg-white text-slate-700',
+            'z-[100] p-0 shadow-xl border-border',
+            'bg-popover text-popover-foreground',
             'touch-auto' // Allow touch scrolling in tooltip
           )}
           style={{ maxWidth }}
@@ -80,18 +87,18 @@ export function InfoTooltip({
           <div className="p-3">
             {title && (
               <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold text-slate-900 text-sm">{title}</span>
+                <span className="font-semibold text-foreground text-sm">{title}</span>
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="lg:hidden -mr-1 p-1 rounded-full hover:bg-slate-100 transition-colors"
+                  className="lg:hidden -mr-1 p-1 rounded-full hover:bg-muted transition-colors"
                   aria-label="Luk"
                 >
-                  <X className="h-3.5 w-3.5 text-slate-400" />
+                  <X className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
               </div>
             )}
-            <div className="text-xs leading-relaxed text-slate-600">
+            <div className="text-xs leading-relaxed text-muted-foreground">
               {content}
             </div>
           </div>
@@ -124,15 +131,15 @@ export function ExplainerCard({
   const [isExpanded, setIsExpanded] = React.useState(defaultExpanded);
 
   const variantStyles = {
-    info: 'bg-blue-50 border-blue-100 text-blue-800',
-    tip: 'bg-amber-50 border-amber-100 text-amber-800',
-    warning: 'bg-red-50 border-red-100 text-red-800',
+    info: 'bg-blue-50 dark:bg-blue-950/50 border-blue-100 dark:border-blue-800/50 text-blue-800 dark:text-blue-200',
+    tip: 'bg-amber-50 dark:bg-amber-950/50 border-amber-100 dark:border-amber-800/50 text-amber-800 dark:text-amber-200',
+    warning: 'bg-red-50 dark:bg-red-950/50 border-red-100 dark:border-red-800/50 text-red-800 dark:text-red-200',
   };
 
   const iconStyles = {
-    info: 'text-blue-500',
-    tip: 'text-amber-500',
-    warning: 'text-red-500',
+    info: 'text-blue-500 dark:text-blue-400',
+    tip: 'text-amber-500 dark:text-amber-400',
+    warning: 'text-red-500 dark:text-red-400',
   };
 
   return (

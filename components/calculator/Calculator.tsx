@@ -102,10 +102,10 @@ export function Calculator() {
 
               {/* Live Summary Card */}
               {isDirty && (
-                <div className="card-premium p-5 bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-100">
+                <div className="card-premium p-5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 border-blue-100 dark:border-blue-800/50">
                   <div className="flex items-center gap-2 mb-4">
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">
+                    <span className="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider">
                       Live beregning
                     </span>
                   </div>
@@ -135,7 +135,7 @@ export function Calculator() {
                 onClick={() => setShowMethodology(false)}
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
                   !showMethodology
-                    ? 'bg-slate-900 text-white shadow-lg'
+                    ? 'bg-foreground text-background shadow-lg'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >
@@ -145,7 +145,7 @@ export function Calculator() {
                 onClick={() => setShowMethodology(true)}
                 className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
                   showMethodology
-                    ? 'bg-slate-900 text-white shadow-lg'
+                    ? 'bg-foreground text-background shadow-lg'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                 }`}
               >

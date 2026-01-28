@@ -120,12 +120,12 @@ export function ProductionOverview({ projection, selfConsumptionRate }: Producti
           <div className="space-y-6">
             {/* Key Metrics */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 border border-emerald-200">
-                <p className="text-xs font-medium text-emerald-600 uppercase tracking-wide mb-1">Ar 1 produktion</p>
-                <p className="text-2xl font-bold text-emerald-900">
+              <div className="rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950/50 dark:to-emerald-900/30 p-4 border border-emerald-200 dark:border-emerald-800/50">
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400 uppercase tracking-wide mb-1">Ar 1 produktion</p>
+                <p className="text-2xl font-bold text-emerald-900 dark:text-emerald-100">
                   <AnimatedNumber value={metrics.firstYearProduction} format={formatKwh} />
                 </p>
-                <p className="text-xs text-emerald-600 mt-1">kWh</p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1">kWh</p>
               </div>
               <div className="rounded-xl bg-muted p-4 border border-border">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Ar 25 produktion</p>
@@ -134,49 +134,49 @@ export function ProductionOverview({ projection, selfConsumptionRate }: Producti
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">kWh</p>
               </div>
-              <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 p-4 border border-blue-200">
-                <p className="text-xs font-medium text-blue-600 uppercase tracking-wide mb-1">Total (25 ar)</p>
-                <p className="text-2xl font-bold text-blue-900">
+              <div className="rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/50 dark:to-blue-900/30 p-4 border border-blue-200 dark:border-blue-800/50">
+                <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide mb-1">Total (25 ar)</p>
+                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
                   <AnimatedNumber value={metrics.totalProduction} format={formatKwh} />
                 </p>
-                <p className="text-xs text-blue-600 mt-1">kWh</p>
+                <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">kWh</p>
               </div>
-              <div className="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 p-4 border border-amber-200">
-                <p className="text-xs font-medium text-amber-600 uppercase tracking-wide mb-1">Egetforbrug</p>
-                <p className="text-2xl font-bold text-amber-900">
+              <div className="rounded-xl bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950/50 dark:to-amber-900/30 p-4 border border-amber-200 dark:border-amber-800/50">
+                <p className="text-xs font-medium text-amber-600 dark:text-amber-400 uppercase tracking-wide mb-1">Egetforbrug</p>
+                <p className="text-2xl font-bold text-amber-900 dark:text-amber-100">
                   {Math.round(selfConsumptionRate * 100)}%
                 </p>
-                <p className="text-xs text-amber-600 mt-1">af produktion</p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">af produktion</p>
               </div>
             </div>
 
             {/* Energy Distribution Summary */}
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-50 border border-emerald-100">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-100 dark:border-emerald-800/50">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-emerald-500 rounded-lg">
                     <Zap className="h-4 w-4 text-white" />
                   </div>
                   <div>
                     <span className="text-sm font-medium text-foreground">Egetforbrug</span>
-                    <p className="text-xs text-muted-foreground">ar 1</p>
+                    <p className="text-xs text-muted-foreground">år 1</p>
                   </div>
                 </div>
-                <span className="text-lg font-bold text-emerald-700">
+                <span className="text-lg font-bold text-emerald-700 dark:text-emerald-400">
                   {metrics.selfConsumedKwh.toLocaleString('da-DK')} kWh
                 </span>
               </div>
-              <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50 border border-blue-100">
+              <div className="flex items-center justify-between p-4 rounded-xl bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-800/50">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-blue-500 rounded-lg">
                     <Zap className="h-4 w-4 text-white" />
                   </div>
                   <div>
                     <span className="text-sm font-medium text-foreground">Solgt til net</span>
-                    <p className="text-xs text-muted-foreground">ar 1</p>
+                    <p className="text-xs text-muted-foreground">år 1</p>
                   </div>
                 </div>
-                <span className="text-lg font-bold text-blue-700">
+                <span className="text-lg font-bold text-blue-700 dark:text-blue-400">
                   {metrics.exportedKwh.toLocaleString('da-DK')} kWh
                 </span>
               </div>
@@ -222,20 +222,20 @@ export function ProductionOverview({ projection, selfConsumptionRate }: Producti
               </BarChart>
             </ChartContainer>
 
-            <div className="mt-4 grid grid-cols-2 gap-3 border-t pt-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 border border-emerald-100">
+            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-border pt-4">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-100 dark:border-emerald-800/50">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                  <span className="text-sm text-muted-foreground">Egetforbrug (ar 1)</span>
+                  <span className="text-sm text-muted-foreground">Egetforbrug (år 1)</span>
                 </div>
-                <span className="font-semibold text-emerald-700">{metrics.selfConsumedKwh.toLocaleString('da-DK')} kWh</span>
+                <span className="font-semibold text-emerald-700 dark:text-emerald-400">{metrics.selfConsumedKwh.toLocaleString('da-DK')} kWh</span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 border border-blue-100">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-50 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-800/50">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span className="text-sm text-muted-foreground">Solgt til net (ar 1)</span>
+                  <span className="text-sm text-muted-foreground">Solgt til net (år 1)</span>
                 </div>
-                <span className="font-semibold text-blue-700">{metrics.exportedKwh.toLocaleString('da-DK')} kWh</span>
+                <span className="font-semibold text-blue-700 dark:text-blue-400">{metrics.exportedKwh.toLocaleString('da-DK')} kWh</span>
               </div>
             </div>
           </>

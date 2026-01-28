@@ -103,8 +103,8 @@ export function MetricsGrid({ projection, systemSizeKw, systemCost, currency = '
               <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                 {metric.label}
               </h3>
-              <div className="p-2 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
-                <Icon className="h-4 w-4 text-blue-600" />
+              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/50 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                <Icon className="h-4 w-4 text-blue-600 dark:text-blue-400" />
               </div>
             </div>
             <div className="space-y-1">

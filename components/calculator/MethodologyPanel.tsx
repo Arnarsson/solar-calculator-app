@@ -149,7 +149,7 @@ export function MethodologyPanel() {
           </AccordionItem>
         </Accordion>
 
-        <div className="mt-8 pt-6 border-t text-center">
+        <div className="mt-8 pt-6 border-t border-border text-center">
           <p className="text-sm text-muted-foreground">
             Beregningsmotor <span className="font-semibold text-foreground">v1.0.0</span> • Sidst opdateret: Januar 2026
           </p>
